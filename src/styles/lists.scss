@@ -1,0 +1,58 @@
+@import './variables';
+
+.rules,
+.offerta {
+  &__title {
+    font-weight: 700;
+    font-size: 32px;
+    line-height: 40px;
+    color: $color-text-dark;
+    margin-bottom: 32px;
+    @media (max-width: 320px) {
+      font-size: 18px;
+      line-height: 28px;
+    }
+  }
+  ol {
+    list-style: none;
+    counter-reset: li;
+  }
+  li:before {
+    counter-increment: li;
+    content: counters(li, '.') '. ';
+  }
+  .item-1level {
+    font-weight: 600;
+    font-size: 16px;
+    line-height: 24px;
+    color: $color-text-dark;
+    margin-bottom: 34px;
+    &:last-of-type {
+      margin-bottom: 0;
+    }
+  }
+  .item-2level {
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 24px;
+    color: $color-text-dark;
+    padding-left: 30px;
+    margin-top: 16px;
+    @media (max-width: 320px) {
+      font-size: 15px;
+      line-height: 20px;
+    }
+  }
+  .item-3level {
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 24px;
+    color: $color-text-dark;
+    padding-left: 29px;
+    margin-top: 16px;
+  }
+  .item-4level {
+    padding-left: 30px;
+    margin-top: 16px;
+  }
+}
