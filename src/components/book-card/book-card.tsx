@@ -1,32 +1,34 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 
-import otherCover from '../../assets/icons/other_cover.svg';
+import { ReactComponent as OtherCover } from '../../assets/icons/other_cover.svg';
 // eslint-disable-next-line import/no-extraneous-dependencies
-import bookCover from '../../assets/images/book.jpg';
-import { IBook } from '../../types';
+import { IBookCard } from '../../types';
+import { HOST } from '../../utils/constants';
+import { deliveryDate } from '../../utils/functions';
 import { Rating } from '../rating/rating';
 
 import './book-card.scss';
 
 type BookCardProps = {
-  book: IBook;
+  book: IBookCard;
 };
 
 export const BookCard = ({ book }: BookCardProps) => {
-  const bookedTillDate = new Date(Date.parse(book.bookedTill.split(' ')[0])).getDate();
-  const bookedTillMonth = new Date(Date.parse(book.bookedTill.split(' ')[0])).getMonth() + 1;
-  const bookedTill = `занята до ${bookedTillDate}.${bookedTillMonth}`;
+  const { category } = useParams();
 
   return (
     <li className='book' key={book.id} data-test-id='card'>
-      <Link to={`/books/${book.category}/${book.id}`}>
+      <Link to={`/books/${category}/${book.id}`}>
         <div className='book__image-wrapper'>
-          <img
-            src={book.image[0] === 'bookCover' ? bookCover : otherCover}
-            className={book.image[0] === 'bookCover' ? 'book__image' : 'book__image not-found'}
-            alt='book cover'
-          />
+          {book.image && (
+            <img
+              src={`${HOST}${book.image}`}
+              className={book.image ? 'book__image' : 'book__image not-found'}
+              alt='book cover'
+            />
+          )}
+          {!book.image && <OtherCover className='book__image not-found' />}
         </div>
       </Link>
 
@@ -40,25 +42,25 @@ export const BookCard = ({ book }: BookCardProps) => {
             <p>{book.title}</p>{' '}
           </div>
           <div className='book__author'>
-            {book.author}, {book.year}
+            {book.authors.map((author) => author)}, {book.issueYear}
           </div>
         </div>
 
-        {!book.isBooked && (
+        {!book.booking && !book.delivery && (
           <button type='button' className='book__reserve no-booked'>
             Забронировать
           </button>
         )}
 
-        {book.isBooked && !book.bookedTill && (
+        {book.booking && (
           <button type='button' className='book__reserve is-booked'>
             Забронирована
           </button>
         )}
 
-        {book.isBooked && book.bookedTill && (
+        {book.delivery?.handed && (
           <button type='button' className='book__reserve is-booked-till'>
-            {bookedTill}
+            Занята {deliveryDate(book.delivery.dateHandedTo)}
           </button>
         )}
       </div>

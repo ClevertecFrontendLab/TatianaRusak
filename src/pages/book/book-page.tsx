@@ -1,13 +1,16 @@
 /* eslint-disable global-require */
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
+import axios from 'axios';
 import classNames from 'classnames';
 
 import { ReactComponent as Chevron } from '../../assets/icons/chevron.svg';
 import User from '../../assets/images/user.jpg';
 import { Rating } from '../../components/rating/rating';
 import { SwiperCarousel } from '../../components/SwiperCarousel/swiper-carousel';
-import { IBook } from '../../types';
+import { IBookDetailed } from '../../types';
+import { HOST } from '../../utils/constants';
+import { deliveryDate } from '../../utils/functions';
 
 import './book-page.scss';
 import '../../components/SwiperCarousel/swiper-carousel.scss';
@@ -18,56 +21,13 @@ import 'swiper/css/thumbs';
 
 export const BookPage = () => {
   const { bookId } = useParams();
+  const [book, setBook] = useState({} as IBookDetailed);
+
+  // useEffect(() => {
+  //   axios.get(`${HOST}/api/books/${bookId}`).then((response) => setBook(response.data));
+  // }, [bookId]);
+
   const [isFeedbacksVisible, setFeedbacksVisibility] = useState(false);
-  const threeBooks = [
-    {
-      id: '63ca7627f79ebdac69926ffc',
-      image: [],
-      category: 'business',
-      author: 'Адитья Бхаргава',
-      title: 'Грокаем алгоритмы. ',
-      rating: 3,
-      year: 1972,
-      isBooked: true,
-      bookedTill: '',
-    },
-    {
-      id: '63ca7627549c20ea76acb8fc',
-      image: [require('../../assets/images/book1.jpg')],
-      category: 'business',
-      author: 'Lenore Delaney',
-      title: 'Грокаем алгоритмы. Иллюстрированное пособие для',
-      rating: 5,
-      year: 1998,
-      isBooked: true,
-      bookedTill: '2024-10-02T10:46:09 -03:00',
-    },
-    {
-      id: '63ca762761ae79531f1acb53',
-      image: [
-        require('../../assets/images/book1.jpg'),
-        require('../../assets/images/book2.jpg'),
-        require('../../assets/images/book3.jpg'),
-        require('../../assets/images/book4.jpg'),
-        require('../../assets/images/book5.jpg'),
-        require('../../assets/images/book6.jpg'),
-        require('../../assets/images/book7.jpg'),
-      ],
-      category: 'business',
-      author: 'Katie Terry',
-      title: 'Грокаем алгоритмы. Иллюстрированное ',
-      rating: 1,
-      year: 1975,
-      isBooked: true,
-      bookedTill: '',
-    },
-  ];
-
-  const book = threeBooks.find((item) => item.id === bookId) as unknown as IBook;
-
-  const bookedTillDate = new Date(Date.parse(book.bookedTill.split(' ')[0])).getDate();
-  const bookedTillMonth = new Date(Date.parse(book.bookedTill.split(' ')[0])).getMonth() + 1;
-  const bookedTill = `занята до ${bookedTillDate}.${bookedTillMonth}`;
 
   return (
     <section className='book-page'>
@@ -78,33 +38,33 @@ export const BookPage = () => {
       </div>
       <div className='wrapper'>
         <div className='book-page__book-info'>
-          {!book.image.length && <div className='book-page__book-cover no-cover' data-test-id='slide-big' />}
-          {book.image.length !== 0 && (
+          {!book.images.length && <div className='book-page__book-cover no-cover' data-test-id='slide-big' />}
+          {book.images.length !== 0 && (
             <div className='book-page__carousel-wrapper'>
-              <SwiperCarousel images={book.image} />
+              <SwiperCarousel images={book.images} />
             </div>
           )}
           <div className='book-page__book-about'>
             <div className='book-page__title'>{book.title} </div>
             <div className='book-page__author'>
-              {book.author}, {book.year}
+              {book.authors.map((author) => author)}, {book.issueYear}
             </div>
             <div className='book-page__reserve-button'>
-              {!book.isBooked && (
+              {!book.booking && !book.delivery && (
                 <button type='button' className='no-booked'>
                   Забронировать
                 </button>
               )}
 
-              {book.isBooked && !book.bookedTill && (
+              {book.booking && (
                 <button type='button' className='is-booked'>
                   Забронирована
                 </button>
               )}
 
-              {book.isBooked && book.bookedTill && (
+              {book.delivery && (
                 <button type='button' className='is-booked-till'>
-                  {bookedTill}
+                  Занята {deliveryDate(book.delivery.dateHandedTo)}
                 </button>
               )}
             </div>

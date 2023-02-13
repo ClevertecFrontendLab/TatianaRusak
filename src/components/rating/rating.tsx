@@ -7,16 +7,16 @@ import { ReactComponent as ColoredStar } from '../../assets/icons/star_colored.s
 import './rating.scss';
 
 type RatingPropsType = {
-  rate: number;
+  rate: number | null;
 };
 
 export const Rating = (props: RatingPropsType) => {
   return (
     <div className='rating'>
-      {props.rate === 0 && <span key={nanoid()}>ещё нет оценок</span>}
-      {props.rate !== 0 &&
+      {props.rate === null && <span key={nanoid()}>ещё нет оценок</span>}
+      {props.rate &&
         [...Array(5)].map((item, index) => {
-          if (index < props.rate) {
+          if (props.rate !== null && index < props.rate) {
             return (
               <span className='rating__star' key={nanoid()}>
                 <ColoredStar />
