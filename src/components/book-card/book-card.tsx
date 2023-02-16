@@ -1,7 +1,12 @@
+/* eslint-disable jsx-a11y/no-noninteractive-element-interactions */
+/* eslint-disable jsx-a11y/no-static-element-interactions */
+/* eslint-disable jsx-a11y/click-events-have-key-events */
 import React from 'react';
-import { Link, useParams } from 'react-router-dom';
+import { NavLink, useParams } from 'react-router-dom';
 
 import { ReactComponent as OtherCover } from '../../assets/icons/other_cover.svg';
+import { fetchSelectedBook } from '../../store/book-slice';
+import { useAppDispatch } from '../../store/store';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { IBookCard } from '../../types';
 import { HOST } from '../../utils/constants';
@@ -15,22 +20,25 @@ type BookCardProps = {
 };
 
 export const BookCard = ({ book }: BookCardProps) => {
+  const oldCategory = 'all';
   const { category } = useParams();
+  const actualCategory = category ? category : oldCategory;
+  const dispatch = useAppDispatch();
 
   return (
     <li className='book' key={book.id} data-test-id='card'>
-      <Link to={`/books/${category}/${book.id}`}>
+      <NavLink to={`/books/${actualCategory}/${book.id}`} onClick={() => dispatch(fetchSelectedBook(book.id))}>
         <div className='book__image-wrapper'>
           {book.image && (
             <img
-              src={`${HOST}${book.image}`}
+              src={`${HOST}${book.image.url}`}
               className={book.image ? 'book__image' : 'book__image not-found'}
               alt='book cover'
             />
           )}
           {!book.image && <OtherCover className='book__image not-found' />}
         </div>
-      </Link>
+      </NavLink>
 
       <div className='book__description'>
         <div className='book__rating'>

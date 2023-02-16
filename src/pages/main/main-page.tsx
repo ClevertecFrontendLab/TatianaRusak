@@ -5,7 +5,7 @@ import { BookCard } from '../../components/book-card/book-card';
 import { Loader } from '../../components/loader/loader';
 import { Navigation } from '../../components/navigation/navigation';
 import { useTypedSelector } from '../../hooks/use-typed-selector';
-import { fetchBooks, setSelectedBook } from '../../store/book-slice';
+import { fetchBooks, fetchSelectedBook } from '../../store/book-slice';
 import { useAppDispatch } from '../../store/store';
 
 import './main-page.scss';
@@ -16,7 +16,7 @@ export const MainPage = () => {
 
   useEffect(() => {
     dispatch(fetchBooks());
-    dispatch(setSelectedBook(null));
+    dispatch(fetchSelectedBook(2));
   }, [dispatch]);
 
   const bookState = useTypedSelector((state) => state.bookReducer);
@@ -29,7 +29,6 @@ export const MainPage = () => {
           <Loader />
         </div>
       )}
-
       {!bookState.error && (
         <main>
           <Navigation contentView={contentView} setContentView={setContentView} />
@@ -40,7 +39,6 @@ export const MainPage = () => {
           </ul>
         </main>
       )}
-
       {bookState.error && <p className=''>тут какая-то ошибка. надо разобраться!!!!!!!!!!!!!!!!!</p>}
     </Fragment>
   );

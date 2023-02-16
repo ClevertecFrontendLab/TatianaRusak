@@ -1,6 +1,5 @@
 /* eslint-disable jsx-a11y/no-noninteractive-element-interactions */
-import React, { useState } from 'react';
-import { useDispatch } from 'react-redux';
+import React, { useEffect, useState } from 'react';
 import { NavLink, useLocation, useParams } from 'react-router-dom';
 import classNames from 'classnames';
 // eslint-disable-next-line import/no-extraneous-dependencies
@@ -8,34 +7,43 @@ import { nanoid } from 'nanoid';
 
 import { ReactComponent as Chevron } from '../../assets/icons/chevron.svg';
 import { useTypedSelector } from '../../hooks/use-typed-selector';
+import { fetchCategories } from '../../store/book-slice';
 import { changeMode } from '../../store/burger-slice';
-import bookStoreCategories from '../../utils/book-categories.json';
-import bookStore from '../../utils/books.json';
+import { useAppDispatch } from '../../store/store';
+import { TABLET_BROAD_WIDTH } from '../../utils/constants';
+import { getWindowWidth } from '../../utils/functions';
 
+// import bookStoreCategories from '../../utils/book-categories.json';
+// import bookStore from '../../utils/books.json';
 import './menu.scss';
 
 export const Menu = () => {
-  const categoriesFullOfBooks = Object.entries(bookStore);
-  const categoriesRu = Object.values(bookStoreCategories);
-
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const isOpened = useTypedSelector((state) => state.burgerReducer.isOpened);
 
   const toggleMenuMode = () => {
-    dispatch(changeMode(!isOpened));
-    document.body.classList.toggle('not-scroll');
+    if (getWindowWidth() <= TABLET_BROAD_WIDTH) {
+      dispatch(changeMode(!isOpened));
+      document.body.classList.toggle('not-scroll');
+    }
   };
+
+  useEffect(() => {
+    dispatch(fetchCategories());
+  }, [dispatch]);
+
+  const categories = useTypedSelector((state) => state.bookReducer.categories);
 
   const isBooksLocation = useLocation().pathname.split('/').includes('books');
   const isFirstVisit = useLocation().pathname === '/';
   const { bookId } = useParams();
   const [isCategoriesVisible, setCategoriesVisible] = useState(isFirstVisit || isBooksLocation);
 
-  const menuItems = categoriesFullOfBooks.map((item, index) => {
+  const menuItems = categories.map((item, index) => {
     return (
       <li className='submenu__cat' key={nanoid()} onClick={toggleMenuMode} onKeyDown={toggleMenuMode}>
-        <NavLink to={`/books/${item[0]}`} className='submenu__link'>
-          <span>{categoriesRu[index]}</span> <span>{item[1].length}</span>
+        <NavLink to={`/books/${item.path}`} className='submenu__link'>
+          <span>{item.name}</span> <span>{index}</span>
         </NavLink>
       </li>
     );

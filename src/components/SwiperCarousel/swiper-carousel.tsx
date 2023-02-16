@@ -10,6 +10,7 @@ import { Swiper, SwiperSlide } from 'swiper/react';
 import SwiperClass from 'swiper/types/swiper-class';
 
 import { TABLET_BROAD_WIDTH } from '../../utils/constants';
+import { getWindowWidth } from '../../utils/functions';
 
 import './swiper-carousel.scss';
 
@@ -24,12 +25,6 @@ type SwiperCarouselProp = {
 
 export const SwiperCarousel = ({ images }: SwiperCarouselProp) => {
   const [thumbsSwiper, setThumbsSwiper] = useState<SwiperClass>();
-
-  const getWindowWidth = () => {
-    const { innerWidth } = window;
-
-    return innerWidth;
-  };
 
   return (
     <Fragment>

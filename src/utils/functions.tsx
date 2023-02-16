@@ -6,4 +6,10 @@ const deliveryDate = (date: string) => {
   return bookedTill;
 };
 
-export { deliveryDate };
+const getWindowWidth = () => {
+  const { innerWidth } = window;
+
+  return innerWidth;
+};
+
+export { deliveryDate, getWindowWidth };

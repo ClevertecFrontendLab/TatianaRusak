@@ -44,6 +44,10 @@ export interface IComment {
   user: IUser;
 }
 
+export interface IImage {
+  url: string;
+}
+
 export interface IBookDetailed {
   id: number;
   title: string;
@@ -58,8 +62,8 @@ export interface IBookDetailed {
   ISBN: string;
   producer: string;
   authors: string[];
-  image?: string;
-  images: string[];
+  image?: IImage;
+  images: IImage[];
   categories: string[];
   comments: IComment[];
   booking: string;
@@ -68,9 +72,26 @@ export interface IBookDetailed {
 }
 
 export interface IBookState {
+  categories: ICategory[];
   allBooks: IBookCard[];
   loading: boolean;
   selectedBookId: null | number;
+  selectedBook: null | IBookDetailed;
   error: boolean;
   errorMessage: string;
+}
+
+export interface ICategory {
+  name: string;
+  path: string;
+  id: number;
+}
+export interface ICategoryFailRes {
+  data: null;
+  error: {
+    status: number;
+    name: string;
+    message: string;
+    details: object;
+  };
 }
