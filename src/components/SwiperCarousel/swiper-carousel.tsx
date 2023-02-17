@@ -26,6 +26,8 @@ type SwiperCarouselProp = {
 export const SwiperCarousel = ({ images }: SwiperCarouselProp) => {
   const [thumbsSwiper, setThumbsSwiper] = useState<SwiperClass>();
 
+  console.log('images', images);
+
   return (
     <Fragment>
       <Swiper
@@ -48,7 +50,7 @@ export const SwiperCarousel = ({ images }: SwiperCarouselProp) => {
         })}
       </Swiper>
 
-      {images.length > 1 && getWindowWidth() > TABLET_BROAD_WIDTH && (
+      {images.length > 1 && (
         <Swiper
           onSwiper={setThumbsSwiper}
           spaceBetween={34}

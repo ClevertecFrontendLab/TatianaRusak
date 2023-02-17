@@ -54,12 +54,12 @@
   &__book-cover {
     min-width: 445px;
     height: fit-content;
-    border: 1px solid #a7a7a7;
-    border-radius: 10px;
     &.no-cover {
       height: 594px;
       background: #f9f9fa url('../../assets/icons/other_cover.svg') center no-repeat;
       background-size: 10%;
+      border: 1px solid #a7a7a7;
+      border-radius: 10px;
       @media (max-width: 960px) {
         min-width: 136px;
         height: 198px;

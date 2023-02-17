@@ -8,22 +8,26 @@
     0px 1px 5px rgba(191, 196, 201, 0.24);
   border-radius: 10px;
   padding: 8px 8px 16px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  row-gap: 16px;
   @media (max-width: 590px) {
     width: 100%;
-    display: flex;
-    flex-direction: column;
     align-items: center;
     padding: 8px 16px 16px;
   }
   &__image-wrapper {
     position: relative;
     width: 174px;
-    height: auto;
-    min-height: 240px;
-    background: #f9f9fa;
-    border: 1px solid $color-text-light;
-    border-radius: 10px;
-    overflow: hidden;
+    height: 240px;
+    & > img {
+      max-width: 100%;
+      max-height: 100%;
+    }
+    @media (max-width: 590px) {
+      margin: 0 auto;
+    }
   }
   &__image.not-found {
     position: absolute;
@@ -63,7 +67,7 @@
   &__reserve {
     height: 40px;
     width: 166px;
-    margin-top: 28px;
+    margin-top: auto;
     border-radius: 20px;
     font-weight: 600;
     font-size: 12px;
@@ -97,16 +101,21 @@
 }
 
 .list .book {
-  display: flex;
-  flex-direction: row;
-  column-gap: 16px;
-  width: 100%;
-  min-height: 202px;
-  background: #ffffff;
-  box-shadow: 0px 2px 4px rgba(191, 196, 201, 0.2), 0px 3px 4px rgba(191, 196, 201, 0.18),
-    0px 1px 5px rgba(191, 196, 201, 0.24);
-  border-radius: 10px;
-  padding: 24px 24px 24px 16px;
+  position: relative;
+  // padding-bottom: -74px;
+  height: fit-content;
+  & > div {
+    display: flex;
+    flex-direction: row;
+    column-gap: 16px;
+    width: 100%;
+    min-height: 202px;
+    background: #ffffff;
+    box-shadow: 0px 2px 4px rgba(191, 196, 201, 0.2), 0px 3px 4px rgba(191, 196, 201, 0.18),
+      0px 1px 5px rgba(191, 196, 201, 0.24);
+    border-radius: 10px;
+    padding: 24px 24px 24px 16px;
+  }
   @media (max-width: 768px) {
     padding: 14px 24px 24px 16px;
   }
@@ -118,15 +127,15 @@
   &__image-wrapper {
     position: relative;
     width: 120px;
-    height: auto;
-    min-height: 164px;
-    background: #f9f9fa;
-    border: 1px solid $color-text-light;
-    border-radius: 10px;
-    overflow: hidden;
+    height: 164px;
     @media (max-width: 420px) {
       width: 70px;
-      min-height: 96px;
+      height: 96px;
+      margin: 0 auto;
+    }
+    & > img {
+      max-width: 100%;
+      max-height: 100%;
     }
   }
   &__image.not-found {
@@ -138,6 +147,7 @@
   &__description {
     position: relative;
     width: 100%;
+    padding-bottom: 60px;
     @media (max-width: 768px) {
       padding-bottom: 48px;
     }
@@ -174,8 +184,14 @@
     line-height: 32px;
     font-weight: 600;
     color: $color-text-dark;
-    vertical-align: middle;
-    line-clamp: 3;
+    // vertical-align: middle;
+    // line-clamp: 3;
+    & > p {
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
     @media (max-width: 768px) {
       font-size: 24px;
       line-height: 30px;
@@ -200,8 +216,8 @@
   }
   &__reserve {
     position: absolute;
-    right: 0;
-    bottom: 10px;
+    bottom: 30px;
+    right: 24px;
     height: 40px;
     width: 174px;
     margin-top: 28px;
@@ -214,10 +230,15 @@
     text-transform: uppercase;
     border: none;
     @media (max-width: 768px) {
-      bottom: 0;
+      bottom: 46px;
+      right: 36px;
     }
     @media (max-width: 590px) {
       width: 186px;
+    }
+    @media (max-width: 410px) {
+      width: 80%;
+      bottom: 30px;
     }
     &.no-booked {
       background: linear-gradient(231.58deg, #f83600 -53.35%, #f9d423 297.76%);

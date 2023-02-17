@@ -6,10 +6,22 @@ const deliveryDate = (date: string) => {
   return bookedTill;
 };
 
+const toFormattedDate = (dateStr: Date) => {
+  const date = new Date(dateStr);
+  const options: Intl.DateTimeFormatOptions = {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+  };
+  const formatted = date.toLocaleDateString('ru-RU', options);
+
+  return formatted;
+};
+
 const getWindowWidth = () => {
   const { innerWidth } = window;
 
   return innerWidth;
 };
 
-export { deliveryDate, getWindowWidth };
+export { deliveryDate, getWindowWidth, toFormattedDate };
