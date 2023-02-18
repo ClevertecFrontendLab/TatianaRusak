@@ -1,5 +1,5 @@
 /* eslint-disable jsx-a11y/no-noninteractive-element-interactions */
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { NavLink, useLocation, useParams } from 'react-router-dom';
 import classNames from 'classnames';
 // eslint-disable-next-line import/no-extraneous-dependencies
@@ -7,7 +7,7 @@ import { nanoid } from 'nanoid';
 
 import { ReactComponent as Chevron } from '../../assets/icons/chevron.svg';
 import { useTypedSelector } from '../../hooks/use-typed-selector';
-import { fetchCategories } from '../../store/book-slice';
+// import { fetchCategories } from '../../store/book-slice';
 import { changeMode } from '../../store/burger-slice';
 import { useAppDispatch } from '../../store/store';
 import { TABLET_BROAD_WIDTH } from '../../utils/constants';
@@ -19,6 +19,7 @@ import './menu.scss';
 
 export const Menu = () => {
   const dispatch = useAppDispatch();
+  const bookState = useTypedSelector((state) => state.bookReducer);
   const isOpened = useTypedSelector((state) => state.burgerReducer.isOpened);
 
   const toggleMenuMode = () => {
@@ -28,11 +29,9 @@ export const Menu = () => {
     }
   };
 
-  useEffect(() => {
-    dispatch(fetchCategories());
-  }, [dispatch]);
-
   const categories = useTypedSelector((state) => state.bookReducer.categories);
+  const error = Object.values(bookState.error).find((item) => item) as boolean;
+  const loading = Object.values(bookState.loading).find((item) => item) as boolean;
 
   const isBooksLocation = useLocation().pathname.split('/').includes('books');
   const isFirstVisit = useLocation().pathname === '/';
@@ -65,22 +64,25 @@ export const Menu = () => {
               onClick={() => setCategoriesVisible(!isCategoriesVisible)}
             >
               Витрина книг
-              <Chevron className={classNames({ up: isCategoriesVisible })} />
+              {!loading && !error && <Chevron className={classNames({ up: isCategoriesVisible })} />}
             </h5>
           </NavLink>
-          <ul className={classNames('submenu__categories', { visible: isCategoriesVisible })}>
-            <li className='submenu__cat' onClick={toggleMenuMode} onKeyDown={toggleMenuMode}>
-              <NavLink
-                data-test-id='burger-books'
-                to='/books/all'
-                className={({ isActive }) => (isActive ? 'submenu__link active' : 'submenu__link')}
-              >
-                <span data-test-id='navigation-books'>Все книги</span>
-                <span> </span>
-              </NavLink>
-            </li>
-            {menuItems}
-          </ul>
+
+          {!error && !loading && (
+            <ul className={classNames('submenu__categories', { visible: isCategoriesVisible })}>
+              <li className='submenu__cat' onClick={toggleMenuMode} onKeyDown={toggleMenuMode}>
+                <NavLink
+                  data-test-id='burger-books'
+                  to='/books/all'
+                  className={({ isActive }) => (isActive ? 'submenu__link active' : 'submenu__link')}
+                >
+                  <span data-test-id='navigation-books'>Все книги</span>
+                  <span> </span>
+                </NavLink>
+              </li>
+              {menuItems}
+            </ul>
+          )}
         </li>
         <li className='menu__item' onClick={toggleMenuMode} onKeyDown={toggleMenuMode}>
           <NavLink to='/rules' className='menu__link' data-test-id='navigation-terms'>

@@ -32,6 +32,8 @@ export const BookPage = () => {
 
   const bookState = useTypedSelector((state) => state.bookReducer);
   const book = useTypedSelector((state) => state.bookReducer.selectedBook as IBookDetailed);
+  const error = Object.values(bookState.error).find((item) => item) as boolean;
+  const loading = Object.values(bookState.loading).find((item) => item) as boolean;
 
   const imagesArr = book.images.reduce<string[]>((acc, imageObj) => [...acc, `${HOST}${imageObj.url}`], []);
 
@@ -39,13 +41,13 @@ export const BookPage = () => {
 
   return (
     <Fragment>
-      {bookState.loading && (
+      {loading && (
         <div className='loader__blur'>
           <Loader />
         </div>
       )}
 
-      {!bookState.error && (
+      {!error && (
         <section className='book-page'>
           <div className='book-page__breadcrumbs'>
             <div className='wrapper'>

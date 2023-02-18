@@ -5,41 +5,45 @@ import { BookCard } from '../../components/book-card/book-card';
 import { Loader } from '../../components/loader/loader';
 import { Navigation } from '../../components/navigation/navigation';
 import { useTypedSelector } from '../../hooks/use-typed-selector';
-import { fetchBooks, fetchSelectedBook } from '../../store/book-slice';
+import { fetchBooks, fetchCategories } from '../../store/book-slice';
 import { useAppDispatch } from '../../store/store';
 
 import './main-page.scss';
 
 export const MainPage = () => {
   const [contentView, setContentView] = useState('content tile');
+
   const dispatch = useAppDispatch();
 
   useEffect(() => {
     dispatch(fetchBooks());
-    dispatch(fetchSelectedBook(2));
+    dispatch(fetchCategories());
   }, [dispatch]);
 
   const bookState = useTypedSelector((state) => state.bookReducer);
   const books = bookState.allBooks;
+  const error = Object.values(bookState.error).find((item) => item) as boolean;
+  const loading = Object.values(bookState.loading).find((item) => item) as boolean;
 
   return (
     <Fragment>
-      {bookState.loading && (
+      {loading && (
         <div className='loader__blur'>
           <Loader />
         </div>
       )}
-      {!bookState.error && (
-        <main>
-          <Navigation contentView={contentView} setContentView={setContentView} />
+
+      <main>
+        <Navigation contentView={contentView} setContentView={setContentView} />
+
+        {!error && !loading && (
           <ul className={contentView}>
             {books.map((book) => {
               return <BookCard book={book} key={nanoid()} />;
             })}
           </ul>
-        </main>
-      )}
-      {bookState.error && <p className=''>тут какая-то ошибка. надо разобраться!!!!!!!!!!!!!!!!!</p>}
+        )}
+      </main>
     </Fragment>
   );
 };

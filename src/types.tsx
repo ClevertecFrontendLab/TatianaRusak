@@ -74,10 +74,18 @@ export interface IBookDetailed {
 export interface IBookState {
   categories: ICategory[];
   allBooks: IBookCard[];
-  loading: boolean;
   selectedBookId: null | number;
   selectedBook: null | IBookDetailed;
-  error: boolean;
+  loading: {
+    fetchCategories: boolean;
+    fetchBooks: boolean;
+    fetchSelectedBook: boolean;
+  };
+  error: {
+    fetchCategories: boolean;
+    fetchBooks: boolean;
+    fetchSelectedBook: boolean;
+  };
   errorMessage: string;
 }
 
@@ -86,7 +94,7 @@ export interface ICategory {
   path: string;
   id: number;
 }
-export interface ICategoryFailRes {
+export interface IResponceFail {
   data: null;
   error: {
     status: number;

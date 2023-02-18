@@ -1,14 +1,14 @@
 main {
   width: 100%;
 }
-.main-page {
+.content {
   min-height: 100%;
   flex-grow: 1;
   display: flex;
   flex-direction: row;
   margin-top: 62px;
-  .content.tile,
-  .content.list {
+  &.tile,
+  &.list {
     display: flex;
     margin-top: 32px;
     @media (max-width: 768px) {
@@ -19,7 +19,7 @@ main {
       row-gap: 16px;
     }
   }
-  .content.tile {
+  &.tile {
     flex-wrap: wrap;
     flex-direction: row;
     justify-content: space-between;
@@ -31,7 +31,7 @@ main {
       justify-content: center;
     }
   }
-  .content.list {
+  &.list {
     flex-direction: column;
     row-gap: 16px;
   }

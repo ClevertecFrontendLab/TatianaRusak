@@ -71,6 +71,9 @@
   }
   &__search-cross {
     display: none;
+    & svg {
+      fill: $color-text-light;
+    }
     &.visible {
       display: block;
       position: absolute;

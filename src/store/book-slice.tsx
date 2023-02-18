@@ -3,44 +3,56 @@ import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import axios from 'axios';
 
 import { RootState } from '../hooks/use-typed-selector';
-import { IBookCard, IBookDetailed, IBookState, ICategory } from '../types';
+import { IBookCard, IBookDetailed, IBookState, ICategory, IResponceFail } from '../types';
 import { HOST } from '../utils/constants';
 
-export const fetchBooks = createAsyncThunk<IBookCard[], undefined, { rejectValue: string }>(
+export const fetchBooks = createAsyncThunk<IBookCard[], undefined, { rejectValue: IResponceFail }>(
   'book/fetchBooks',
   async () => {
     try {
       const responce = await axios.get(`${HOST}/api/books/`);
 
+      if (responce.status !== 200) {
+        throw new Error(responce.data);
+      }
+
       return responce.data;
-    } catch (err) {
-      return (err as Error).message;
+    } catch (error) {
+      return (error as IResponceFail).error.message;
     }
   }
 );
 
-export const fetchSelectedBook = createAsyncThunk<IBookDetailed, number, { rejectValue: string }>(
-  'book/fetchSelectedBook',
-  async (id) => {
-    try {
-      const responce = await axios.get(`${HOST}/api/books/${id}`);
-
-      return responce.data;
-    } catch (err) {
-      return (err as Error).message;
-    }
-  }
-);
-
-export const fetchCategories = createAsyncThunk<ICategory[], undefined, { rejectValue: string }>(
+export const fetchCategories = createAsyncThunk<ICategory[], undefined, { rejectValue: IResponceFail }>(
   'book/fetchCategories',
   async () => {
     try {
       const responce = await axios.get(`${HOST}/api/categories`);
 
+      if (responce.status !== 200) {
+        throw new Error(responce.data);
+      }
+
       return responce.data;
-    } catch (err) {
-      return (err as Error).message;
+    } catch (error) {
+      return (error as IResponceFail).error.message;
+    }
+  }
+);
+
+export const fetchSelectedBook = createAsyncThunk<IBookDetailed, number, { rejectValue: IResponceFail }>(
+  'book/fetchSelectedBook',
+  async (id) => {
+    try {
+      const responce = await axios.get(`${HOST}/api/books/${id}`);
+
+      if (responce.status !== 200) {
+        throw new Error(responce.data);
+      }
+
+      return responce.data;
+    } catch (error) {
+      return (error as IResponceFail).error.message;
     }
   }
 );
@@ -48,10 +60,18 @@ export const fetchCategories = createAsyncThunk<ICategory[], undefined, { reject
 const initialState: IBookState = {
   categories: [],
   allBooks: [],
-  loading: false,
   selectedBookId: null,
   selectedBook: null,
-  error: false,
+  loading: {
+    fetchCategories: false,
+    fetchBooks: false,
+    fetchSelectedBook: false,
+  },
+  error: {
+    fetchCategories: false,
+    fetchBooks: false,
+    fetchSelectedBook: false,
+  },
   errorMessage: '',
 };
 
@@ -69,40 +89,43 @@ const bookSlice = createSlice({
   extraReducers: (builder) => {
     builder
       .addCase(fetchBooks.pending, (state) => {
-        state.loading = true;
+        state.loading.fetchBooks = true;
+        state.error.fetchBooks = false;
       })
       .addCase(fetchBooks.fulfilled, (state, action) => {
         state.allBooks = action.payload;
-        state.loading = false;
-        state.error = false;
+        state.loading.fetchBooks = false;
+        state.error.fetchBooks = false;
       })
       .addCase(fetchBooks.rejected, (state, action) => {
-        state.error = true;
-        state.errorMessage = action.payload as string;
-        state.loading = false;
+        state.error.fetchBooks = true;
+        state.loading.fetchBooks = false;
       })
       .addCase(fetchSelectedBook.pending, (state) => {
-        state.loading = true;
+        state.loading.fetchSelectedBook = true;
+        state.error.fetchSelectedBook = false;
       })
       .addCase(fetchSelectedBook.fulfilled, (state, action) => {
         state.selectedBook = action.payload;
-        state.loading = false;
-        state.error = false;
+        state.loading.fetchSelectedBook = false;
+        state.error.fetchSelectedBook = false;
       })
       .addCase(fetchSelectedBook.rejected, (state, action) => {
-        state.loading = false;
-        state.errorMessage = action.payload as string;
+        state.loading.fetchSelectedBook = false;
+        state.error.fetchSelectedBook = true;
       })
       .addCase(fetchCategories.pending, (state) => {
-        state.loading = true;
+        state.loading.fetchCategories = true;
+        state.error.fetchCategories = false;
       })
       .addCase(fetchCategories.fulfilled, (state, action) => {
         state.categories = action.payload;
-        state.error = false;
+        state.error.fetchCategories = false;
+        state.loading.fetchCategories = false;
       })
       .addCase(fetchCategories.rejected, (state, action) => {
-        state.loading = false;
-        state.errorMessage = action.payload as string;
+        state.error.fetchCategories = true;
+        state.loading.fetchCategories = false;
       });
   },
 });
