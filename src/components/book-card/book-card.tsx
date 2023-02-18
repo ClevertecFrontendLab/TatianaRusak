@@ -5,7 +5,7 @@ import React from 'react';
 import { NavLink, useParams } from 'react-router-dom';
 
 import { ReactComponent as OtherCover } from '../../assets/icons/other_cover.svg';
-import { fetchSelectedBook } from '../../store/book-slice';
+import { fetchSelectedBook, setSelectedBookId } from '../../store/book-slice';
 import { useAppDispatch } from '../../store/store';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { IBookCard } from '../../types';
@@ -25,10 +25,15 @@ export const BookCard = ({ book }: BookCardProps) => {
   const actualCategory = category ? category : oldCategory;
   const dispatch = useAppDispatch();
 
+  const chooseBook = () => {
+    dispatch(fetchSelectedBook(book.id));
+    dispatch(setSelectedBookId(book.id));
+  };
+
   return (
     <li className='book' key={book.id} data-test-id='card'>
       <div>
-        <NavLink to={`/books/${actualCategory}/${book.id}`} onClick={() => dispatch(fetchSelectedBook(book.id))}>
+        <NavLink to={`/books/${actualCategory}/${book.id}`} onClick={chooseBook}>
           <div className='book__image-wrapper'>
             {book.image && (
               <img

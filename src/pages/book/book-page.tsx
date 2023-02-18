@@ -1,6 +1,5 @@
 /* eslint-disable global-require */
 import React, { Fragment, useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
 import classNames from 'classnames';
 
 import { ReactComponent as Chevron } from '../../assets/icons/chevron.svg';
@@ -23,19 +22,22 @@ import 'swiper/css/navigation';
 import 'swiper/css/thumbs';
 
 export const BookPage = () => {
-  const { bookId } = useParams();
+  // const { bookId } = useParams();
   const dispatch = useAppDispatch();
+  const bookState = useTypedSelector((state) => state.bookReducer);
+  const bookId = useTypedSelector((state) => state.bookReducer.selectedBookId);
 
   useEffect(() => {
     dispatch(fetchSelectedBook(Number(bookId)));
   }, [dispatch, bookId]);
 
-  const bookState = useTypedSelector((state) => state.bookReducer);
   const book = useTypedSelector((state) => state.bookReducer.selectedBook as IBookDetailed);
-  const error = Object.values(bookState.error).find((item) => item) as boolean;
+  const error = bookState.error.fetchSelectedBook;
   const loading = Object.values(bookState.loading).find((item) => item) as boolean;
 
-  const imagesArr = book.images.reduce<string[]>((acc, imageObj) => [...acc, `${HOST}${imageObj.url}`], []);
+  const imagesArr = book
+    ? book.images.reduce<string[]>((acc, imageObj) => [...acc, `${HOST}${imageObj.url}`], [])
+    : ([] as string[]);
 
   const [isFeedbacksVisible, setFeedbacksVisibility] = useState(false);
 
@@ -47,13 +49,13 @@ export const BookPage = () => {
         </div>
       )}
 
-      {!error && (
-        <section className='book-page'>
-          <div className='book-page__breadcrumbs'>
-            <div className='wrapper'>
-              <span>Категория</span> / <span>{book.title}</span>
-            </div>
+      <section className='book-page'>
+        <div className='book-page__breadcrumbs'>
+          <div className='wrapper'>
+            <span>Категория</span> / <span>название книги</span>
           </div>
+        </div>
+        {!error && !loading && (
           <div className='wrapper'>
             <div className='book-page__book-info'>
               {!book.images.length && <div className='book-page__book-cover no-cover' data-test-id='slide-big' />}
@@ -163,8 +165,8 @@ export const BookPage = () => {
               </button>
             </div>
           </div>
-        </section>
-      )}
+        )}
+      </section>
     </Fragment>
   );
 };
