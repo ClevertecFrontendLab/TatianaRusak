@@ -54,7 +54,8 @@
     justify-content: center;
   }
   .swiper-slide {
-    min-height: 86px;
+    min-height: 80px;
+    min-width: 50px;
     max-width: fit-content;
     cursor: pointer;
     border: 2px solid #bfc4c9;

@@ -11,7 +11,6 @@ import { SwiperCarousel } from '../../components/SwiperCarousel/swiper-carousel'
 import { useTypedSelector } from '../../hooks/use-typed-selector';
 import { fetchSelectedBook } from '../../store/book-slice';
 import { useAppDispatch } from '../../store/store';
-import { IBookDetailed } from '../../types';
 import { HOST } from '../../utils/constants';
 import { deliveryDate } from '../../utils/functions';
 
@@ -33,7 +32,10 @@ export const BookPage = () => {
   }, [bookId, dispatch]);
 
   const bookState = useTypedSelector((state) => state.bookReducer);
-  const book = bookState?.selectedBook as IBookDetailed;
+  const category = bookState?.allBooks.find((book) => book.id === Number(bookId))?.categories[0];
+  const title = bookState?.allBooks.find((book) => book.id === Number(bookId))?.title;
+
+  const book = bookState.selectedBook;
   const error = bookState.error.fetchSelectedBook;
   const loading = bookState.loading.fetchSelectedBook;
 
@@ -54,7 +56,7 @@ export const BookPage = () => {
       <section className='book-page'>
         <div className='book-page__breadcrumbs'>
           <div className='wrapper'>
-            <span>Категория</span> / <span>название книги - {bookId}</span>
+            <span>{category}</span> / <span>{title}</span>
           </div>
         </div>
         {!error && !loading && book && (

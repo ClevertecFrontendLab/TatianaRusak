@@ -34,14 +34,16 @@ export const MainPage = () => {
       )}
 
       <main>
-        <Navigation contentView={contentView} setContentView={setContentView} />
-
         {!error && !loading && (
-          <ul className={contentView}>
-            {books.map((book) => {
-              return <BookCard book={book} key={nanoid()} />;
-            })}
-          </ul>
+          <Fragment>
+            <Navigation contentView={contentView} setContentView={setContentView} />
+
+            <ul className={contentView}>
+              {books.map((book) => {
+                return <BookCard book={book} key={nanoid()} />;
+              })}
+            </ul>
+          </Fragment>
         )}
       </main>
     </Fragment>
