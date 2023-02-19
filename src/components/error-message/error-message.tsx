@@ -17,7 +17,7 @@ export const ErrorMessage = () => {
   const [visible, setVisible] = useState(true);
 
   return (
-    <div className={classNames('error', { visible })}>
+    <div className={classNames('error', { visible })} data-test-id='error'>
       <WarningCircle className='error__warning' />
       <p className='error__message'>Что-то пошло не так. Обновите страницу через некоторое время.</p>
 

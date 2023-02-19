@@ -19,12 +19,12 @@ root.render(
       <HashRouter>
         <Routes>
           <Route path='/' element={<Layout />}>
-            <Route index={true} element={<Navigate to='books/all' />} />
-            <Route path='books/all' element={<MainPage />} />
-            <Route path='books/:category' element={<MainPage />} />
-            <Route path='rules' element={<RulesPage title='Правила пользования' />} />
-            <Route path='offerta' element={<RulesPage title='Договор оферты' />} />
-            <Route path='books/:category/:bookId' element={<BookPage />} />
+            <Route index={true} element={<Navigate to='/books/all' />} />
+            <Route path='/books/all' element={<MainPage />} />
+            <Route path='/books/:category' element={<MainPage />} />
+            <Route path='/rules' element={<RulesPage title='Правила пользования' />} />
+            <Route path='/offerta' element={<RulesPage title='Договор оферты' />} />
+            <Route path='/books/:category/:bookId' element={<BookPage />} />
           </Route>
         </Routes>
       </HashRouter>

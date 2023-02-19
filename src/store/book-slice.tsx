@@ -40,7 +40,7 @@ export const fetchCategories = createAsyncThunk<ICategory[], undefined, { reject
   }
 );
 
-export const fetchSelectedBook = createAsyncThunk<IBookDetailed, number, { rejectValue: IResponceFail }>(
+export const fetchSelectedBook = createAsyncThunk<IBookDetailed, string, { rejectValue: IResponceFail }>(
   'book/fetchSelectedBook',
   async (id) => {
     try {

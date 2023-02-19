@@ -74,7 +74,7 @@ export interface IBookDetailed {
 export interface IBookState {
   categories: ICategory[];
   allBooks: IBookCard[];
-  selectedBookId: null | number;
+  selectedBookId: null | string;
   selectedBook: null | IBookDetailed;
   loading: {
     fetchCategories: boolean;

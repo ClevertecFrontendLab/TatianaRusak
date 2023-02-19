@@ -26,8 +26,8 @@ export const BookCard = ({ book }: BookCardProps) => {
   const dispatch = useAppDispatch();
 
   const chooseBook = () => {
-    dispatch(fetchSelectedBook(book.id));
-    dispatch(setSelectedBookId(book.id));
+    // dispatch(fetchSelectedBook(book.id));
+    // dispatch(setSelectedBookId(book.id));
   };
 
   return (
