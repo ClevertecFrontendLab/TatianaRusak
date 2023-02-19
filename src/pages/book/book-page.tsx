@@ -9,9 +9,10 @@ import { Loader } from '../../components/loader/loader';
 import { Rating } from '../../components/rating/rating';
 import { SwiperCarousel } from '../../components/SwiperCarousel/swiper-carousel';
 import { useTypedSelector } from '../../hooks/use-typed-selector';
-import { fetchSelectedBook, setSelectedBook, setSelectedBookId } from '../../store/book-slice';
+import { fetchSelectedBook } from '../../store/book-slice';
 import { useAppDispatch } from '../../store/store';
 import { IBookDetailed } from '../../types';
+import { HOST } from '../../utils/constants';
 import { deliveryDate } from '../../utils/functions';
 
 import './book-page.scss';
@@ -25,24 +26,20 @@ export const BookPage = () => {
   const { bookId } = useParams();
   const dispatch = useAppDispatch();
 
-  console.log('привет из компонента');
-
   useEffect(() => {
-    console.log('привет из юзэффекта');
     if (bookId) {
       dispatch(fetchSelectedBook(bookId));
     }
   }, [bookId, dispatch]);
 
   const bookState = useTypedSelector((state) => state.bookReducer);
-  const book = bookState.selectedBook as IBookDetailed;
-  console.log('book', book);
+  const book = bookState?.selectedBook as IBookDetailed;
   const error = bookState.error.fetchSelectedBook;
   const loading = bookState.loading.fetchSelectedBook;
 
-  // const imagesArr = book
-  //   ? book.images.reduce<string[]>((acc, imageObj) => [...acc, `${HOST}${imageObj.url}`], [])
-  //   : ([] as string[]);
+  const imagesArr = book
+    ? book.images.reduce<string[]>((acc, imageObj) => [...acc, `${HOST}${imageObj.url}`], [])
+    : ([] as string[]);
 
   const [isFeedbacksVisible, setFeedbacksVisibility] = useState(false);
 
@@ -60,15 +57,15 @@ export const BookPage = () => {
             <span>Категория</span> / <span>название книги - {bookId}</span>
           </div>
         </div>
-        {!error && !loading && (
+        {!error && !loading && book && (
           <div className='wrapper'>
             <div className='book-page__book-info'>
               {!book.images.length && <div className='book-page__book-cover no-cover' data-test-id='slide-big' />}
-              {/* {book.images.length !== 0 && (
+              {book.images.length !== 0 && (
                 <div className='book-page__carousel-wrapper'>
                   <SwiperCarousel images={imagesArr} />
                 </div>
-              )} */}
+              )}
               <div className='book-page__book-about'>
                 <div className='book-page__title'>{book.title} </div>
                 <div className='book-page__author'>
