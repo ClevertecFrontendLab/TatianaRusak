@@ -7,14 +7,11 @@ import { nanoid } from 'nanoid';
 
 import { ReactComponent as Chevron } from '../../assets/icons/chevron.svg';
 import { useTypedSelector } from '../../hooks/use-typed-selector';
-// import { fetchCategories } from '../../store/book-slice';
 import { changeMode } from '../../store/burger-slice';
 import { useAppDispatch } from '../../store/store';
 import { TABLET_BROAD_WIDTH } from '../../utils/constants';
 import { getWindowWidth } from '../../utils/functions';
 
-// import bookStoreCategories from '../../utils/book-categories.json';
-// import bookStore from '../../utils/books.json';
 import './menu.scss';
 
 export const Menu = () => {

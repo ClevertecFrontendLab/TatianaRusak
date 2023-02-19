@@ -1,5 +1,3 @@
-// export type IBookStore = Record<string, IBook[]>;
-
 export interface IHistory {
   id: number;
   userId: number;

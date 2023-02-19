@@ -26,8 +26,6 @@ type SwiperCarouselProp = {
 export const SwiperCarousel = ({ images }: SwiperCarouselProp) => {
   const [thumbsSwiper, setThumbsSwiper] = useState<SwiperClass>();
 
-  console.log('images', images);
-
   return (
     <Fragment>
       <Swiper

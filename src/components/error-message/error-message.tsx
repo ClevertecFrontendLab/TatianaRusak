@@ -4,16 +4,9 @@ import classNames from 'classnames';
 import { ReactComponent as Cross } from '../../assets/icons/cross.svg';
 import { ReactComponent as WarningCircle } from '../../assets/icons/warning-circle.svg';
 
-// import { useTypedSelector } from '../../hooks/use-typed-selector';
 import './error-message.scss';
 
-// interface IErrorMessageProps {
-//   visibility: boolean;
-// }
-
 export const ErrorMessage = () => {
-  // const bookState = useTypedSelector((state) => state.bookReducer);
-  // const error = Object.values(bookState.error).find((item) => item) as boolean;
   const [visible, setVisible] = useState(true);
 
   return (

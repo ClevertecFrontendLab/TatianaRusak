@@ -102,7 +102,6 @@
 
 .list .book {
   position: relative;
-  // padding-bottom: -74px;
   height: fit-content;
   & > div {
     display: flex;
@@ -184,8 +183,6 @@
     line-height: 32px;
     font-weight: 600;
     color: $color-text-dark;
-    // vertical-align: middle;
-    // line-clamp: 3;
     & > p {
       display: -webkit-box;
       -webkit-line-clamp: 3;
