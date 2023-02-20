@@ -1,0 +1,11 @@
+.rating {
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
+  @media (max-width: 768px) {
+    gap: 16px;
+  }
+  @media (max-width: 320px) {
+    gap: 9px;
+  }
+}
