@@ -22,7 +22,7 @@ import 'swiper/css/navigation';
 import 'swiper/css/thumbs';
 
 export const BookPage = () => {
-  const { bookId } = useParams();
+  const { bookId, category } = useParams();
   const dispatch = useAppDispatch();
 
   useEffect(() => {
@@ -32,7 +32,8 @@ export const BookPage = () => {
   }, [bookId, dispatch]);
 
   const bookState = useTypedSelector((state) => state.bookReducer);
-  const category = bookState?.allBooks.find((book) => book.id === Number(bookId))?.categories[0];
+  const categoryActual =
+    category === 'all' ? 'Все книги' : bookState?.allBooks.find((book) => book.id === Number(bookId))?.categories[0];
   const title = bookState?.allBooks.find((book) => book.id === Number(bookId))?.title;
 
   const book = bookState.selectedBook;
@@ -56,7 +57,7 @@ export const BookPage = () => {
       <section className='book-page'>
         <div className='book-page__breadcrumbs'>
           <div className='wrapper'>
-            <span>{category}</span> / <span>{title}</span>
+            <span>{categoryActual}</span> / <span>{title}</span>
           </div>
         </div>
         {!error && !loading && book && (
