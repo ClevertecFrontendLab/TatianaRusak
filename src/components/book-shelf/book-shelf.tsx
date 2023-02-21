@@ -11,18 +11,6 @@ type IBookShelfProps = {
 
 const BookShelf = ({ booksToBeDisplayed }: IBookShelfProps) => {
   const [contentView, setContentView] = useState('content tile');
-
-  return (
-    <main>
-      <Navigation contentView={contentView} setContentView={setContentView} />
-
-      <ul className={contentView}>
-        {booksToBeDisplayed.map((book) => {
-          return <BookCard book={book} key={nanoid()} />;
-        })}
-      </ul>
-    </main>
-  );
 };
 
 export { BookShelf };
