@@ -4,6 +4,7 @@ import { Provider } from 'react-redux';
 import { HashRouter, Navigate, Route, Routes } from 'react-router-dom';
 
 import { Layout } from './components/layout/layout';
+import { LayoutMainPage } from './components/layout-main-page/layout-main-page';
 import { BookPage } from './pages/book';
 import { MainPage } from './pages/main';
 import { RulesPage } from './pages/rules/rules-page';
@@ -19,11 +20,13 @@ root.render(
       <HashRouter>
         <Routes>
           <Route path='/' element={<Layout />}>
-            <Route index={true} element={<Navigate to='/books/all' />} />
-            <Route path='/books/all' element={<MainPage />} />
-            <Route path='/books/:category' element={<MainPage />} />
-            <Route path='/rules' element={<RulesPage title='Правила пользования' />} />
-            <Route path='/offerta' element={<RulesPage title='Договор оферты' />} />
+            <Route element={<LayoutMainPage />}>
+              <Route index={true} element={<Navigate to='/books/all' />} />
+              <Route path='/books/all' element={<MainPage />} />
+              <Route path='/books/:category' element={<MainPage />} />
+              <Route path='/rules' element={<RulesPage title='Правила пользования' />} />
+              <Route path='/offerta' element={<RulesPage title='Договор оферты' />} />
+            </Route>
             <Route path='/books/:category/:bookId' element={<BookPage />} />
           </Route>
         </Routes>

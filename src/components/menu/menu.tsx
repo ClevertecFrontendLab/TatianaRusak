@@ -1,5 +1,5 @@
 /* eslint-disable jsx-a11y/no-noninteractive-element-interactions */
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { NavLink, useLocation, useParams } from 'react-router-dom';
 import classNames from 'classnames';
 // eslint-disable-next-line import/no-extraneous-dependencies
@@ -7,6 +7,7 @@ import { nanoid } from 'nanoid';
 
 import { ReactComponent as Chevron } from '../../assets/icons/chevron.svg';
 import { useTypedSelector } from '../../hooks/use-typed-selector';
+import { fetchCategories, setSelectedCategory } from '../../store/book-slice';
 import { changeMode } from '../../store/burger-slice';
 import { useAppDispatch } from '../../store/store';
 import { TABLET_BROAD_WIDTH } from '../../utils/constants';
@@ -14,10 +15,20 @@ import { getWindowWidth } from '../../utils/functions';
 
 import './menu.scss';
 
+// type IMenuProps = {
+//   booksToBeDisplayed: IBookCard[];
+//   setBooksToBeDisplayed(bookArr: IBookCard[]): void;
+// };
+
 export const Menu = () => {
   const dispatch = useAppDispatch();
   const bookState = useTypedSelector((state) => state.bookReducer);
   const isOpened = useTypedSelector((state) => state.burgerReducer.isOpened);
+  // const booksFromApi = bookState.allBooks;
+
+  useEffect(() => {
+    dispatch(fetchCategories());
+  }, [dispatch]);
 
   const toggleMenuMode = () => {
     if (getWindowWidth() <= TABLET_BROAD_WIDTH) {
@@ -26,7 +37,16 @@ export const Menu = () => {
     }
   };
 
+  // const filterByCategory = (category: string) => {
+  //   if (category === 'all') {
+  //     setBooksToBeDisplayed(booksFromApi);
+  //   }
+
+  //   setBooksToBeDisplayed(booksToBeDisplayed.filter((book) => book.categories.includes(category)));
+  // };
+
   const categories = useTypedSelector((state) => state.bookReducer.categories);
+  const booksFromApi = useTypedSelector((state) => state.bookReducer.allBooks);
   const error = Object.values(bookState.error).find((item) => item) as boolean;
   const loading = Object.values(bookState.loading).find((item) => item) as boolean;
 
@@ -35,11 +55,19 @@ export const Menu = () => {
   const { bookId } = useParams();
   const [isCategoriesVisible, setCategoriesVisible] = useState(isFirstVisit || isBooksLocation);
 
+  const catCountArray = categories.map((categoryName) => {
+    return booksFromApi.filter((book) => book.categories.includes(categoryName.name)).length;
+  });
+
   const menuItems = categories.map((item, index) => {
     return (
       <li className='submenu__cat' key={nanoid()} onClick={toggleMenuMode} onKeyDown={toggleMenuMode}>
-        <NavLink to={`/books/${item.path}`} className='submenu__link'>
-          <span>{item.name}</span> <span>{index}</span>
+        <NavLink
+          to={`/books/${item.path}`}
+          className='submenu__link'
+          onClick={() => dispatch(setSelectedCategory(item.path))}
+        >
+          <span>{item.name}</span> <span>{catCountArray[index]}</span>
         </NavLink>
       </li>
     );
@@ -72,6 +100,7 @@ export const Menu = () => {
                   data-test-id='burger-books'
                   to='/books/all'
                   className={({ isActive }) => (isActive ? 'submenu__link active' : 'submenu__link')}
+                  onClick={() => dispatch(setSelectedCategory('all'))}
                 >
                   <span data-test-id='navigation-books'>Все книги</span>
                   <span> </span>

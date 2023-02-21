@@ -61,6 +61,7 @@ const initialState: IBookState = {
   categories: [],
   allBooks: [],
   selectedBook: null,
+  selectedCategory: 'all',
   loading: {
     fetchCategories: false,
     fetchBooks: false,
@@ -78,8 +79,8 @@ const bookSlice = createSlice({
   name: 'book',
   initialState,
   reducers: {
-    someReducer(state, action) {
-      state.selectedBook = action.payload;
+    setSelectedCategory(state, action) {
+      state.selectedCategory = action.payload;
     },
   },
   extraReducers: (builder) => {
@@ -127,5 +128,5 @@ const bookSlice = createSlice({
 });
 
 export const selectAllBooks = (state: RootState) => state.bookReducer.allBooks;
-export const { someReducer } = bookSlice.actions;
+export const { setSelectedCategory } = bookSlice.actions;
 export const bookReducer = bookSlice.reducer;

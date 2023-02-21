@@ -5,7 +5,6 @@ import { useTypedSelector } from '../../hooks/use-typed-selector';
 import { ErrorMessage } from '../error-message/error-message';
 import { Footer } from '../footer/footer';
 import { Header } from '../header/header';
-import { Menu } from '../menu/menu';
 
 export const Layout = () => {
   const bookState = useTypedSelector((state) => state.bookReducer);
@@ -21,7 +20,6 @@ export const Layout = () => {
       )}
 
       <section className='main-content wrapper'>
-        <Menu />
         <Outlet />
       </section>
 
