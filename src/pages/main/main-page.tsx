@@ -21,29 +21,21 @@ export const MainPage = () => {
 
   const bookState = useTypedSelector((state) => state.bookReducer);
   const booksFromApi = bookState.allBooks;
-  // const { selectedCategory } = bookState;
+  const { selectedCategory } = bookState;
   const [booksToBeDisplayed, setBooksToBeDisplayed] = useState<IBookCard[]>([]);
   const [contentView, setContentView] = useState('content tile');
 
   useEffect(() => {
-    setBooksToBeDisplayed(booksFromApi);
-  }, [booksFromApi]);
-  // console.log('booksFromApi', booksFromApi);
-
-  // useEffect(() => {
-  //   const filterByCategory = (category: string) => {
-  //     if (category === 'all') {
-  //       setBooksToBeDisplayed(booksFromApi);
-  //     }
-
-  //     setBooksToBeDisplayed(booksToBeDisplayed.filter((book) => book.categories.includes(category)));
-  //   };
-
-  //   filterByCategory(selectedCategory);
-  // }, [dispatch, booksFromApi, booksToBeDisplayed, selectedCategory]);
+    if (selectedCategory === 'all') {
+      setBooksToBeDisplayed(booksFromApi);
+    } else {
+      setBooksToBeDisplayed(booksFromApi.filter((book) => book.categories.includes(selectedCategory)));
+    }
+  }, [dispatch, booksFromApi, selectedCategory]);
 
   const error = Object.values(bookState.error).includes(true);
   const loading = Object.values(bookState.loading).includes(true);
+  const numberOfBooksInCategory = booksFromApi.filter((book) => book.categories.includes(selectedCategory)).length;
 
   return (
     <main>
@@ -56,6 +48,9 @@ export const MainPage = () => {
               return <BookCard book={book} key={nanoid()} />;
             })}
           </ul>
+
+          {!numberOfBooksInCategory && <p className='content no-books'>В этой категории книг ещё нет</p>}
+          {false && <p className='content no-books'>По запросу ничего не найдено</p>}
         </div>
       )}
     </main>

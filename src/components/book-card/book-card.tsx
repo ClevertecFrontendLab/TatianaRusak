@@ -26,7 +26,7 @@ export const BookCard = ({ book }: BookCardProps) => {
     <li className='book' key={book.id} data-test-id='card'>
       <div>
         <NavLink to={`/books/${actualCategory}/${book.id}`}>
-          <div className='book__image-wrapper'>
+          <div className={book.image ? 'book__image-wrapper' : 'book__image-wrapper not-found'}>
             {book.image && (
               <img
                 src={`${HOST}${book.image.url}`}

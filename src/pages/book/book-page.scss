@@ -58,7 +58,7 @@
       height: 594px;
       background: #f9f9fa url('../../assets/icons/other_cover.svg') center no-repeat;
       background-size: 10%;
-      border: 1px solid #a7a7a7;
+      border: 1px solid $color-text-light;
       border-radius: 10px;
       @media (max-width: 960px) {
         min-width: 136px;

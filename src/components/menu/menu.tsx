@@ -65,7 +65,7 @@ export const Menu = () => {
         <NavLink
           to={`/books/${item.path}`}
           className='submenu__link'
-          onClick={() => dispatch(setSelectedCategory(item.path))}
+          onClick={() => dispatch(setSelectedCategory(item.name))}
         >
           <span>{item.name}</span> <span>{catCountArray[index]}</span>
         </NavLink>
