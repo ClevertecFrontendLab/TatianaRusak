@@ -9,7 +9,7 @@
   @media (max-width: 768px) {
     margin-top: 2px;
   }
-  &__form {
+  &__search-form {
     position: relative;
     height: 38px;
     letter-spacing: 0.1px;
@@ -35,7 +35,7 @@
     }
   }
   &__search,
-  &__filter {
+  &__sort {
     background: #ffffff;
     border-radius: 600px;
     border: none;
@@ -44,6 +44,23 @@
     box-shadow: 0px 2px 4px rgba(191, 196, 201, 0.2), 0px 3px 4px rgba(191, 196, 201, 0.18),
       0px 1px 5px rgba(191, 196, 201, 0.24);
     color: $color-text-light;
+  }
+  &__sort {
+    position: relative;
+  }
+  &__sort-kinds {
+    background: none;
+    border: none;
+    outline: none;
+    color: $color-text-light;
+  }
+  &__sort-button {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 14px;
+    background: none;
+    border: none;
   }
   &__search {
     width: 100%;
@@ -103,9 +120,8 @@
       }
     }
   }
-  &__filter {
+  & {
     width: 150px;
-    background: url('../../assets/icons/filter.svg') no-repeat 16px center #ffffff;
     -moz-appearance: none;
     -webkit-appearance: none;
     appearance: none;
@@ -123,6 +139,7 @@
       color: transparent;
       background-position: center;
     }
+
     & option {
       background: #ffffff;
       border: 0;

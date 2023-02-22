@@ -60,6 +60,7 @@ export const fetchSelectedBook = createAsyncThunk<IBookDetailed, string, { rejec
 const initialState: IBookState = {
   categories: [],
   allBooks: [],
+  booksToDisplay: [],
   selectedBook: null,
   selectedCategory: 'all',
   loading: {
@@ -81,6 +82,9 @@ const bookSlice = createSlice({
   reducers: {
     setSelectedCategory(state, action) {
       state.selectedCategory = action.payload;
+    },
+    setBooksToDisplay(state, action) {
+      state.booksToDisplay = action.payload;
     },
   },
   extraReducers: (builder) => {
@@ -128,5 +132,5 @@ const bookSlice = createSlice({
 });
 
 export const selectAllBooks = (state: RootState) => state.bookReducer.allBooks;
-export const { setSelectedCategory } = bookSlice.actions;
+export const { setSelectedCategory, setBooksToDisplay } = bookSlice.actions;
 export const bookReducer = bookSlice.reducer;

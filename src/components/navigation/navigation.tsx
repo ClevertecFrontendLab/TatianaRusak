@@ -1,20 +1,27 @@
 import React, { useState } from 'react';
+import { useOutletContext } from 'react-router-dom';
 import classNames from 'classnames';
 
 import { ReactComponent as IconCross } from '../../assets/icons/cross.svg';
 import { ReactComponent as IconList } from '../../assets/icons/list-btn.svg';
 import { ReactComponent as IconSearch } from '../../assets/icons/search.svg';
+import { ReactComponent as SortAscending } from '../../assets/icons/sort-ascending.svg';
+import { ReactComponent as SortDescending } from '../../assets/icons/sort-descending.svg';
 import { ReactComponent as IconTile } from '../../assets/icons/tile-btn.svg';
+import { IOutletContext } from '../layout-main-page/layout-main-page';
 
 import './navigation.scss';
 
 type INavigationProps = {
   contentView: string;
   setContentView: React.Dispatch<React.SetStateAction<string>>;
+  // isSortTypeIncrease: boolean;
+  // setSortType: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
 export const Navigation = ({ contentView, setContentView }: INavigationProps) => {
   const [isSearchInputOpen, setSearchInputOpen] = useState(false);
+  const { isSortTypeIncrease, setSortType } = useOutletContext<IOutletContext>();
 
   const changeContentView = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target) {
@@ -28,9 +35,22 @@ export const Navigation = ({ contentView, setContentView }: INavigationProps) =>
     setSearchInputOpen(true);
   };
 
+  // const sortBooks = () => {
+  //   setSortIncrease(!sortIncrease);
+  //   if (sortIncrease) {
+  //     setBooksToBeDisplayed(booksToBeDisplayed.sort((a, b) => a.rating - b.rating));
+  //   } else {
+  //     setBooksToBeDisplayed(booksToBeDisplayed.sort((a, b) => b.rating - a.rating));
+  //   }
+  //   console.log(booksToBeDisplayed);
+  // };
+
   return (
     <div className='navigation'>
-      <form data-test-id='button-search-open' className={classNames('navigation__form', { open: isSearchInputOpen })}>
+      <form
+        data-test-id='button-search-open'
+        className={classNames('navigation__search-form', { open: isSearchInputOpen })}
+      >
         <button
           type='button'
           className={classNames('navigation__search-loupe', { hidden: isSearchInputOpen })}
@@ -53,15 +73,16 @@ export const Navigation = ({ contentView, setContentView }: INavigationProps) =>
         </button>
       </form>
 
-      <select
-        id='filter'
-        className={classNames('navigation__filter', { hidden: isSearchInputOpen })}
-        placeholder='По рейтингу'
-      >
-        <option value='rate'>По рейтингу</option>
-        <option value='date'>По дате</option>
-        <option value='price'>По цене</option>
-      </select>
+      <form className='navigation__sort'>
+        <button type='button' className='navigation__sort-button' onClick={() => setSortType(!isSortTypeIncrease)}>
+          {isSortTypeIncrease ? <SortDescending /> : <SortAscending />}
+        </button>
+        <select id='sort' className={classNames('navigation__sort-kinds', { hidden: isSearchInputOpen })}>
+          <option value='rate'>По рейтингу</option>
+          <option value='date'>По дате</option>
+          <option value='price'>По цене</option>
+        </select>
+      </form>
 
       <div className={classNames('navigation__display', { hidden: isSearchInputOpen })}>
         <input

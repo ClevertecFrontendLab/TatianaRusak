@@ -1,55 +1,76 @@
+import React, { useEffect, useState } from 'react';
+import { useOutletContext } from 'react-router-dom';
 import { nanoid } from 'nanoid';
-import React, { Fragment, useEffect, useState } from 'react';
-import { BookCard } from '../../components/book-card/book-card';
 
-import { BookShelf } from '../../components/book-shelf/book-shelf';
-import { Loader } from '../../components/loader/loader';
+import { BookCard } from '../../components/book-card/book-card';
+import { IOutletContext } from '../../components/layout-main-page/layout-main-page';
 import { Navigation } from '../../components/navigation/navigation';
 import { useTypedSelector } from '../../hooks/use-typed-selector';
-import { fetchBooks } from '../../store/book-slice';
+import { fetchBooks, setBooksToDisplay } from '../../store/book-slice';
 import { useAppDispatch } from '../../store/store';
-import { IBookCard } from '../../types';
 
+// import { IOutletContext } from '../../types';
 import './main-page.scss';
 
 export const MainPage = () => {
+  const bookState = useTypedSelector((state) => state.bookReducer);
+  const booksFromApi = bookState.allBooks;
+  const { selectedCategory } = bookState;
+  const sortedBooksFromApi = booksFromApi.slice().sort((a, b) => (b.rating > a.rating ? 1 : 0));
+  const { booksToDisplay } = bookState;
+  const [contentView, setContentView] = useState('content tile');
+
+  const error = Object.values(bookState.error).includes(true);
+  const loading = Object.values(bookState.loading).includes(true);
+
+  const numberOfBooksInSelectedCategory = booksFromApi.filter((book) => {
+    if (selectedCategory === 'all') {
+      return true;
+    }
+
+    return book.categories.includes(selectedCategory);
+  }).length;
+
   const dispatch = useAppDispatch();
 
   useEffect(() => {
     dispatch(fetchBooks());
   }, [dispatch]);
 
-  const bookState = useTypedSelector((state) => state.bookReducer);
-  const booksFromApi = bookState.allBooks;
-  const { selectedCategory } = bookState;
-  const [booksToBeDisplayed, setBooksToBeDisplayed] = useState<IBookCard[]>([]);
-  const [contentView, setContentView] = useState('content tile');
+  useEffect(() => {
+    dispatch(setBooksToDisplay(sortedBooksFromApi));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [booksFromApi]);
+
+  const { isSortTypeIncrease } = useOutletContext<IOutletContext>();
 
   useEffect(() => {
-    if (selectedCategory === 'all') {
-      setBooksToBeDisplayed(booksFromApi);
+    if (isSortTypeIncrease) {
+      dispatch(setBooksToDisplay(booksToDisplay.slice().sort((a, b) => a.rating - b.rating)));
     } else {
-      setBooksToBeDisplayed(booksFromApi.filter((book) => book.categories.includes(selectedCategory)));
+      dispatch(setBooksToDisplay(booksToDisplay.slice().sort((a, b) => b.rating - a.rating)));
     }
-  }, [dispatch, booksFromApi, selectedCategory]);
-
-  const error = Object.values(bookState.error).includes(true);
-  const loading = Object.values(bookState.loading).includes(true);
-  const numberOfBooksInCategory = booksFromApi.filter((book) => book.categories.includes(selectedCategory)).length;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isSortTypeIncrease]);
 
   return (
     <main>
       {!error && !loading && (
         <div>
-          <Navigation contentView={contentView} setContentView={setContentView} />
+          <Navigation
+            contentView={contentView}
+            setContentView={setContentView}
+            // isSortTypeIncrease={isSortTypeIncrease}
+            // setSortType={setSortType}
+          />
 
           <ul className={contentView}>
-            {booksToBeDisplayed.map((book) => {
+            {booksToDisplay.map((book) => {
               return <BookCard book={book} key={nanoid()} />;
             })}
           </ul>
 
-          {!numberOfBooksInCategory && <p className='content no-books'>В этой категории книг ещё нет</p>}
+          {!numberOfBooksInSelectedCategory && <p className='content no-books'>В этой категории книг ещё нет</p>}
           {false && <p className='content no-books'>По запросу ничего не найдено</p>}
         </div>
       )}
