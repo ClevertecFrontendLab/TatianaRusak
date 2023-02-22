@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { useState } from 'react';
 import { useOutletContext } from 'react-router-dom';
 import classNames from 'classnames';
 
@@ -21,8 +21,7 @@ type INavigationProps = {
 
 export const Navigation = ({ contentView, setContentView }: INavigationProps) => {
   const [isSearchInputOpen, setSearchInputOpen] = useState(false);
-  const { isSortTypeIncrease, setSortType } = useOutletContext<IOutletContext>();
-  const inputSearch = useRef();
+  const { isSortTypeIncrease, setSortType, setSearchQuery } = useOutletContext<IOutletContext>();
 
   const changeContentView = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target) {
@@ -54,6 +53,10 @@ export const Navigation = ({ contentView, setContentView }: INavigationProps) =>
           className={classNames('navigation__search', { open: isSearchInputOpen })}
           placeholder='Поиск книги или автора…'
           data-test-id='input-search'
+          onChange={(e) => {
+            console.log(e.target.value);
+            setSearchQuery(e.target.value);
+          }}
         />
         <button
           type='button'

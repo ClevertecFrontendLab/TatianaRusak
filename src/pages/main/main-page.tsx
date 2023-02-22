@@ -38,13 +38,17 @@ export const MainPage = () => {
   }, [dispatch]);
 
   useEffect(() => {
-    const bookArrToDisplay = booksFromApi.slice().filter((book) => book.categories.includes(selectedCategory));
+    if (selectedCategory === 'all') {
+      dispatch(setBooksToDisplay(sortedBooksFromApi));
+    } else {
+      const bookArrToDisplay = booksFromApi.slice().filter((book) => book.categories.includes(selectedCategory));
 
-    dispatch(setBooksToDisplay(bookArrToDisplay));
+      dispatch(setBooksToDisplay(bookArrToDisplay));
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [booksFromApi]);
 
-  const { isSortTypeIncrease } = useOutletContext<IOutletContext>();
+  const { isSortTypeIncrease, searchQuery } = useOutletContext<IOutletContext>();
 
   useEffect(() => {
     if (isSortTypeIncrease) {
@@ -54,6 +58,19 @@ export const MainPage = () => {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isSortTypeIncrease]);
+
+  useEffect(() => {
+    if (searchQuery) {
+      dispatch(
+        setBooksToDisplay(
+          booksToDisplay
+            .slice()
+            .filter((book) => book.title.toLocaleLowerCase().includes(searchQuery.toLocaleLowerCase()))
+        )
+      );
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchQuery]);
 
   return (
     <main>
@@ -73,7 +90,9 @@ export const MainPage = () => {
           </ul>
 
           {!numberOfBooksInSelectedCategory && <p className='content no-books'>В этой категории книг ещё нет</p>}
-          {false && <p className='content no-books'>По запросу ничего не найдено</p>}
+          {!!numberOfBooksInSelectedCategory && !booksToDisplay.length && (
+            <p className='content no-books'>По запросу ничего не найдено</p>
+          )}
         </div>
       )}
     </main>
