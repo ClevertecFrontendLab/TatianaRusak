@@ -1,6 +1,8 @@
+/* eslint-disable jsx-a11y/no-static-element-interactions */
+/* eslint-disable react/jsx-no-comment-textnodes */
 /* eslint-disable global-require */
 import React, { Fragment, useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import classNames from 'classnames';
 
 import { ReactComponent as Chevron } from '../../assets/icons/chevron.svg';
@@ -46,6 +48,8 @@ export const BookPage = () => {
 
   const [isFeedbacksVisible, setFeedbacksVisibility] = useState(false);
 
+  const navigate = useNavigate();
+
   return (
     <Fragment>
       {loading && (
@@ -57,7 +61,10 @@ export const BookPage = () => {
       <section className='book-page'>
         <div className='book-page__breadcrumbs'>
           <div className='wrapper'>
-            <span>{categoryActual}</span> / <span>{title}</span>
+            <span onClick={() => navigate(-1)} onKeyDown={() => navigate(-1)} className='book-page__crumb'>
+              {categoryActual}
+            </span>{' '}
+            / <span>{title}</span>
           </div>
         </div>
         {!error && !loading && book && (

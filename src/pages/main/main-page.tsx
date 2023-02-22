@@ -38,7 +38,9 @@ export const MainPage = () => {
   }, [dispatch]);
 
   useEffect(() => {
-    dispatch(setBooksToDisplay(sortedBooksFromApi));
+    const bookArrToDisplay = booksFromApi.slice().filter((book) => book.categories.includes(selectedCategory));
+
+    dispatch(setBooksToDisplay(bookArrToDisplay));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [booksFromApi]);
 

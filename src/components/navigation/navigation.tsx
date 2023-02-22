@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { useOutletContext } from 'react-router-dom';
 import classNames from 'classnames';
 
@@ -22,6 +22,7 @@ type INavigationProps = {
 export const Navigation = ({ contentView, setContentView }: INavigationProps) => {
   const [isSearchInputOpen, setSearchInputOpen] = useState(false);
   const { isSortTypeIncrease, setSortType } = useOutletContext<IOutletContext>();
+  const inputSearch = useRef();
 
   const changeContentView = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target) {
@@ -34,16 +35,6 @@ export const Navigation = ({ contentView, setContentView }: INavigationProps) =>
   const makeSearchInputWide = () => {
     setSearchInputOpen(true);
   };
-
-  // const sortBooks = () => {
-  //   setSortIncrease(!sortIncrease);
-  //   if (sortIncrease) {
-  //     setBooksToBeDisplayed(booksToBeDisplayed.sort((a, b) => a.rating - b.rating));
-  //   } else {
-  //     setBooksToBeDisplayed(booksToBeDisplayed.sort((a, b) => b.rating - a.rating));
-  //   }
-  //   console.log(booksToBeDisplayed);
-  // };
 
   return (
     <div className='navigation'>
