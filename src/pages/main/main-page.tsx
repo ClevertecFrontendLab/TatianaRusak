@@ -89,9 +89,15 @@ export const MainPage = () => {
             })}
           </ul>
 
-          {!numberOfBooksInSelectedCategory && <p className='content no-books'>В этой категории книг ещё нет</p>}
+          {!numberOfBooksInSelectedCategory && (
+            <p className='content no-books' data-test-id='empty-category'>
+              В этой категории книг ещё нет
+            </p>
+          )}
           {!!numberOfBooksInSelectedCategory && !booksToDisplay.length && (
-            <p className='content no-books'>По запросу ничего не найдено</p>
+            <p className='content no-books' data-test-id='search-result-not-found'>
+              По запросу ничего не найдено
+            </p>
           )}
         </div>
       )}

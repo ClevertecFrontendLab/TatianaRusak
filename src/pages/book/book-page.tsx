@@ -61,10 +61,15 @@ export const BookPage = () => {
       <section className='book-page'>
         <div className='book-page__breadcrumbs'>
           <div className='wrapper'>
-            <span onClick={() => navigate(-1)} onKeyDown={() => navigate(-1)} className='book-page__crumb'>
+            <span
+              onClick={() => navigate(-1)}
+              onKeyDown={() => navigate(-1)}
+              className='book-page__crumb'
+              data-test-id='breadcrumbs-link'
+            >
               {categoryActual}
             </span>{' '}
-            / <span>{title}</span>
+            / <span data-test-id='book-name'>{title}</span>
           </div>
         </div>
         {!error && !loading && book && (
@@ -77,7 +82,9 @@ export const BookPage = () => {
                 </div>
               )}
               <div className='book-page__book-about'>
-                <div className='book-page__title'>{book.title} </div>
+                <div className='book-page__title' data-test-id='book-title'>
+                  {book.title}{' '}
+                </div>
                 <div className='book-page__author'>
                   {book.authors.map((author) => author)}, {book.issueYear}
                 </div>

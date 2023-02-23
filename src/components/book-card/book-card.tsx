@@ -21,7 +21,7 @@ type BookCardProps = {
 const highlight = (searchText: string, title: string) => {
   const regex = new RegExp(searchText, 'gi');
 
-  const newText = title.replace(regex, `<span class="highlight">$&</span>`);
+  const newText = title.replace(regex, `<span data-test-id='highlight-matches' class="highlight">$&</span>`);
 
   // eslint-disable-next-line react/no-danger
   return <span dangerouslySetInnerHTML={{ __html: newText }} />;

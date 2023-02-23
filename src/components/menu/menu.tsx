@@ -65,7 +65,8 @@ export const Menu = () => {
           className='submenu__link'
           onClick={() => dispatch(setSelectedCategory(item.name))}
         >
-          <span>{item.name}</span> <span>{catCountArray[index]}</span>
+          <span data-test-id={`navigation-${item.path}`}>{item.name}</span>{' '}
+          <span data-test-id={`navigation-book-count-for${item.path}`}>{catCountArray[index]}</span>
         </NavLink>
       </li>
     );

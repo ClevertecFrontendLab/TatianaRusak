@@ -54,7 +54,6 @@ export const Navigation = ({ contentView, setContentView }: INavigationProps) =>
           placeholder='Поиск книги или автора…'
           data-test-id='input-search'
           onChange={(e) => {
-            console.log(e.target.value);
             setSearchQuery(e.target.value);
           }}
         />
@@ -68,7 +67,12 @@ export const Navigation = ({ contentView, setContentView }: INavigationProps) =>
       </form>
 
       <form className='navigation__sort'>
-        <button type='button' className='navigation__sort-button' onClick={() => setSortType(!isSortTypeIncrease)}>
+        <button
+          type='button'
+          className='navigation__sort-button'
+          onClick={() => setSortType(!isSortTypeIncrease)}
+          data-test-id='sort-rating-button'
+        >
           {isSortTypeIncrease ? <SortDescending /> : <SortAscending />}
         </button>
         <select id='sort' className={classNames('navigation__sort-kinds', { hidden: isSearchInputOpen })}>
