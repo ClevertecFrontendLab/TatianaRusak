@@ -60,7 +60,9 @@ export const fetchSelectedBook = createAsyncThunk<IBookDetailed, string, { rejec
 const initialState: IBookState = {
   categories: [],
   allBooks: [],
+  booksToDisplay: [],
   selectedBook: null,
+  selectedCategory: 'all',
   loading: {
     fetchCategories: false,
     fetchBooks: false,
@@ -78,8 +80,11 @@ const bookSlice = createSlice({
   name: 'book',
   initialState,
   reducers: {
-    someReducer(state, action) {
-      state.selectedBook = action.payload;
+    setSelectedCategory(state, action) {
+      state.selectedCategory = action.payload;
+    },
+    setBooksToDisplay(state, action) {
+      state.booksToDisplay = action.payload;
     },
   },
   extraReducers: (builder) => {
@@ -90,8 +95,9 @@ const bookSlice = createSlice({
       })
       .addCase(fetchBooks.fulfilled, (state, action) => {
         state.allBooks = action.payload;
-        state.loading.fetchBooks = false;
+        state.booksToDisplay = action.payload.sort((a, b) => b.rating - a.rating);
         state.error.fetchBooks = false;
+        state.loading.fetchBooks = false;
       })
       .addCase(fetchBooks.rejected, (state, action) => {
         state.error.fetchBooks = true;
@@ -127,5 +133,5 @@ const bookSlice = createSlice({
 });
 
 export const selectAllBooks = (state: RootState) => state.bookReducer.allBooks;
-export const { someReducer } = bookSlice.actions;
+export const { setSelectedCategory, setBooksToDisplay } = bookSlice.actions;
 export const bookReducer = bookSlice.reducer;

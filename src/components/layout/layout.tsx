@@ -5,11 +5,12 @@ import { useTypedSelector } from '../../hooks/use-typed-selector';
 import { ErrorMessage } from '../error-message/error-message';
 import { Footer } from '../footer/footer';
 import { Header } from '../header/header';
-import { Menu } from '../menu/menu';
+import { Loader } from '../loader/loader';
 
 export const Layout = () => {
   const bookState = useTypedSelector((state) => state.bookReducer);
-  const error = Object.values(bookState.error).find((item) => item) as boolean;
+  const error = Object.values(bookState.error).includes(true);
+  const loading = Object.values(bookState.loading).includes(true);
 
   return (
     <Fragment>
@@ -19,9 +20,13 @@ export const Layout = () => {
           <ErrorMessage />
         </div>
       )}
+      {loading && (
+        <div className='loader__blur'>
+          <Loader />
+        </div>
+      )}
 
       <section className='main-content wrapper'>
-        <Menu />
         <Outlet />
       </section>
 

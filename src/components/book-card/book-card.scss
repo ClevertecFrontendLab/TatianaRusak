@@ -21,7 +21,12 @@
     position: relative;
     width: 174px;
     height: 240px;
-    & > img {
+    &.not-found {
+      background: #f9f9fa;
+      border: 1px solid $color-text-light;
+      border-radius: 10px;
+    }
+    & img {
       max-width: 100%;
       max-height: 100%;
     }
@@ -59,6 +64,9 @@
       -webkit-box-orient: vertical;
       overflow: hidden;
     }
+  }
+  .highlight {
+    color: #ff5253;
   }
   &__author {
     color: $color-text-middle;
@@ -132,7 +140,12 @@
       height: 96px;
       margin: 0 auto;
     }
-    & > img {
+    &.not-found {
+      background: #f9f9fa;
+      border: 1px solid $color-text-light;
+      border-radius: 10px;
+    }
+    & img {
       max-width: 100%;
       max-height: 100%;
     }

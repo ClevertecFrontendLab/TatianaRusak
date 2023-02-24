@@ -1,3 +1,5 @@
+@import '../../styles/variables';
+
 main {
   width: 100%;
 }
@@ -22,7 +24,8 @@ main {
   &.tile {
     flex-wrap: wrap;
     flex-direction: row;
-    justify-content: space-between;
+    justify-content: start;
+    column-gap: 21px;
     row-gap: 24px;
     @media (max-width: 768px) {
       row-gap: 30px;
@@ -34,5 +37,14 @@ main {
   &.list {
     flex-direction: column;
     row-gap: 16px;
+  }
+  &.no-books {
+    display: flex;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 32px;
+    line-height: 40px;
+    color: $color-text-light;
+    margin-top: 200px;
   }
 }

@@ -2,13 +2,14 @@
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 import React from 'react';
-import { NavLink, useParams } from 'react-router-dom';
+import { NavLink, useOutletContext, useParams } from 'react-router-dom';
 
 import { ReactComponent as OtherCover } from '../../assets/icons/other_cover.svg';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { IBookCard } from '../../types';
 import { HOST } from '../../utils/constants';
 import { deliveryDate } from '../../utils/functions';
+import { IOutletContext } from '../layout-main-page/layout-main-page';
 import { Rating } from '../rating/rating';
 
 import './book-card.scss';
@@ -17,16 +18,27 @@ type BookCardProps = {
   book: IBookCard;
 };
 
+const highlight = (searchText: string, title: string) => {
+  const regex = new RegExp(searchText, 'gi');
+
+  const newText = title.replace(regex, `<span data-test-id='highlight-matches' class="highlight">$&</span>`);
+
+  // eslint-disable-next-line react/no-danger
+  return <span dangerouslySetInnerHTML={{ __html: newText }} />;
+};
+
 export const BookCard = ({ book }: BookCardProps) => {
   const oldCategory = 'all';
   const { category } = useParams();
   const actualCategory = category ? category : oldCategory;
 
+  const { searchQuery } = useOutletContext<IOutletContext>();
+
   return (
-    <li className='book' key={book.id} data-test-id='card'>
-      <div>
+    <li className='book' key={book.id}>
+      <div data-test-id='card'>
         <NavLink to={`/books/${actualCategory}/${book.id}`}>
-          <div className='book__image-wrapper'>
+          <div className={book.image ? 'book__image-wrapper' : 'book__image-wrapper not-found'}>
             {book.image && (
               <img
                 src={`${HOST}${book.image.url}`}
@@ -45,7 +57,7 @@ export const BookCard = ({ book }: BookCardProps) => {
 
           <div className='book__name'>
             <div className='book__title'>
-              <p>{book.title}</p>{' '}
+              <p>{highlight(searchQuery, book.title)}</p>{' '}
             </div>
             <div className='book__author'>
               {book.authors.map((author) => author)}, {book.issueYear}
