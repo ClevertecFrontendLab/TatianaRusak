@@ -17,8 +17,8 @@ export const Hamburger = () => {
   };
 
   return (
-    // eslint-disable-next-line jsx-a11y/no-static-element-interactions
     <div
+      role='presentation'
       className={classNames('hamburger', { open: isOpened })}
       id='hamburger'
       onClick={toggleBurgerMode}

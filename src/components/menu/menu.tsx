@@ -1,8 +1,6 @@
-/* eslint-disable jsx-a11y/no-noninteractive-element-interactions */
 import React, { useEffect, useState } from 'react';
 import { NavLink, useLocation, useParams } from 'react-router-dom';
 import classNames from 'classnames';
-// eslint-disable-next-line import/no-extraneous-dependencies
 import { nanoid } from 'nanoid';
 
 import { ReactComponent as Chevron } from '../../assets/icons/chevron.svg';
@@ -21,8 +19,10 @@ export const Menu = () => {
   const isOpened = useTypedSelector((state) => state.burgerReducer.isOpened);
 
   useEffect(() => {
-    dispatch(fetchCategories());
-  }, [dispatch]);
+    if (!bookState.categories.length) {
+      dispatch(fetchCategories());
+    }
+  }, [bookState.categories.length, dispatch]);
 
   const toggleMenuMode = () => {
     if (getWindowWidth() <= TABLET_BROAD_WIDTH) {
@@ -49,7 +49,13 @@ export const Menu = () => {
 
   const menuItems = categories.map((item, index) => {
     return (
-      <li className='submenu__cat' key={nanoid()} onClick={toggleMenuMode} onKeyDown={toggleMenuMode}>
+      <li
+        role='presentation'
+        className='submenu__cat'
+        key={nanoid()}
+        onClick={toggleMenuMode}
+        onKeyDown={toggleMenuMode}
+      >
         <NavLink
           to={`/books/${item.path}`}
           className='submenu__link'
@@ -70,9 +76,9 @@ export const Menu = () => {
             to='/books/all'
             className={classNames('menu__link showcase', { active: isBooksLocation })}
             data-test-id='navigation-showcase'
-            // eslint-disable-next-line react/jsx-no-comment-textnodes
           >
             <h5
+              role='presentation'
               data-test-id='burger-showcase'
               onKeyDown={() => null}
               onClick={() => setCategoriesVisible(!isCategoriesVisible)}
@@ -84,7 +90,7 @@ export const Menu = () => {
 
           {!error && !loading && (
             <ul className={classNames('submenu__categories', { visible: isCategoriesVisible })}>
-              <li className='submenu__cat' onClick={toggleMenuMode} onKeyDown={toggleMenuMode}>
+              <li role='presentation' className='submenu__cat' onClick={toggleMenuMode} onKeyDown={toggleMenuMode}>
                 <NavLink
                   to='/books/all'
                   className={({ isActive }) => (isActive ? 'submenu__link active' : 'submenu__link')}
@@ -98,9 +104,14 @@ export const Menu = () => {
             </ul>
           )}
         </li>
-        <li className='menu__item' onClick={toggleMenuMode} onKeyDown={toggleMenuMode}>
+        <li role='presentation' className='menu__item' onClick={toggleMenuMode} onKeyDown={toggleMenuMode}>
           <NavLink to='/rules' className='menu__link' data-test-id='navigation-terms'>
-            <h5 data-test-id='burger-terms' onKeyDown={() => null} onClick={() => setCategoriesVisible(false)}>
+            <h5
+              role='presentation'
+              data-test-id='burger-terms'
+              onKeyDown={() => null}
+              onClick={() => setCategoriesVisible(false)}
+            >
               Правила пользования
             </h5>
           </NavLink>
@@ -108,6 +119,7 @@ export const Menu = () => {
         <li className='menu__item'>
           <NavLink to='/offerta' className='menu__link' data-test-id='navigation-contract'>
             <h5
+              role='presentation'
               data-test-id='burger-contract'
               onKeyDown={() => null}
               onClick={() => {

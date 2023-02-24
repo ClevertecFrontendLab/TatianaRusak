@@ -1,11 +1,7 @@
-/* eslint-disable jsx-a11y/no-noninteractive-element-interactions */
-/* eslint-disable jsx-a11y/no-static-element-interactions */
-/* eslint-disable jsx-a11y/click-events-have-key-events */
 import React from 'react';
 import { NavLink, useOutletContext, useParams } from 'react-router-dom';
 
 import { ReactComponent as OtherCover } from '../../assets/icons/other_cover.svg';
-// eslint-disable-next-line import/no-extraneous-dependencies
 import { IBookCard } from '../../types';
 import { HOST } from '../../utils/constants';
 import { deliveryDate } from '../../utils/functions';

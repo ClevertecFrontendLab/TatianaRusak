@@ -15,22 +15,22 @@ import './index.scss';
 const root = ReactDOM.createRoot(document.getElementById('root') as HTMLElement);
 
 root.render(
-  // <React.StrictMode>
-  <Provider store={store}>
-    <HashRouter>
-      <Routes>
-        <Route path='/' element={<Layout />}>
-          <Route element={<LayoutMainPage />}>
-            <Route index={true} element={<Navigate to='/books/all' />} />
-            <Route path='/books/all' element={<MainPage />} />
-            <Route path='/books/:category' element={<MainPage />} />
-            <Route path='/rules' element={<RulesPage title='Правила пользования' />} />
-            <Route path='/offerta' element={<RulesPage title='Договор оферты' />} />
+  <React.StrictMode>
+    <Provider store={store}>
+      <HashRouter>
+        <Routes>
+          <Route path='/' element={<Layout />}>
+            <Route element={<LayoutMainPage />}>
+              <Route index={true} element={<Navigate to='/books/all' />} />
+              <Route path='/books/all' element={<MainPage />} />
+              <Route path='/books/:category' element={<MainPage />} />
+              <Route path='/rules' element={<RulesPage title='Правила пользования' />} />
+              <Route path='/offerta' element={<RulesPage title='Договор оферты' />} />
+            </Route>
+            <Route path='/books/:category/:bookId' element={<BookPage />} />
           </Route>
-          <Route path='/books/:category/:bookId' element={<BookPage />} />
-        </Route>
-      </Routes>
-    </HashRouter>
-  </Provider>
-  // </React.StrictMode>
+        </Routes>
+      </HashRouter>
+    </Provider>
+  </React.StrictMode>
 );

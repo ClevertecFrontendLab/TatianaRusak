@@ -1,11 +1,8 @@
-/* eslint-disable global-require */
-// eslint-disable-next-line import/no-extraneous-dependencies, dirnames/match-kebab-case
+// eslint-disable-next-line dirnames/match-kebab-case
 import React, { Fragment, useState } from 'react';
 import classNames from 'classnames';
 import { nanoid } from 'nanoid';
-// eslint-disable-next-line import/no-extraneous-dependencies
 import { FreeMode, Navigation, Pagination, Thumbs } from 'swiper';
-// eslint-disable-next-line import/no-extraneous-dependencies
 import { Swiper, SwiperSlide } from 'swiper/react';
 import SwiperClass from 'swiper/types/swiper-class';
 
