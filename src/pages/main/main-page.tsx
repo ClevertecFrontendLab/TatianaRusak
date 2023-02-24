@@ -9,7 +9,6 @@ import { useTypedSelector } from '../../hooks/use-typed-selector';
 import { fetchBooks, setBooksToDisplay } from '../../store/book-slice';
 import { useAppDispatch } from '../../store/store';
 
-// import { IOutletContext } from '../../types';
 import './main-page.scss';
 
 export const MainPage = () => {
@@ -48,7 +47,7 @@ export const MainPage = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [booksFromApi]);
 
-  const { isSortTypeIncrease, searchQuery } = useOutletContext<IOutletContext>();
+  const { isSortTypeIncrease } = useOutletContext<IOutletContext>();
 
   useEffect(() => {
     if (isSortTypeIncrease) {
@@ -59,29 +58,11 @@ export const MainPage = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isSortTypeIncrease]);
 
-  useEffect(() => {
-    if (searchQuery) {
-      dispatch(
-        setBooksToDisplay(
-          booksToDisplay
-            .slice()
-            .filter((book) => book.title.toLocaleLowerCase().includes(searchQuery.toLocaleLowerCase()))
-        )
-      );
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [searchQuery]);
-
   return (
     <main>
       {!error && !loading && (
         <div>
-          <Navigation
-            contentView={contentView}
-            setContentView={setContentView}
-            // isSortTypeIncrease={isSortTypeIncrease}
-            // setSortType={setSortType}
-          />
+          <Navigation contentView={contentView} setContentView={setContentView} />
 
           <ul className={contentView}>
             {booksToDisplay.map((book) => {

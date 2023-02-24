@@ -83,7 +83,7 @@ export const BookPage = () => {
               )}
               <div className='book-page__book-about'>
                 <div className='book-page__title' data-test-id='book-title'>
-                  {book.title}{' '}
+                  {book.title}
                 </div>
                 <div className='book-page__author'>
                   {book.authors.map((author) => author)}, {book.issueYear}

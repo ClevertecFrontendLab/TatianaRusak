@@ -15,8 +15,6 @@ import './navigation.scss';
 type INavigationProps = {
   contentView: string;
   setContentView: React.Dispatch<React.SetStateAction<string>>;
-  // isSortTypeIncrease: boolean;
-  // setSortType: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
 export const Navigation = ({ contentView, setContentView }: INavigationProps) => {
@@ -66,21 +64,14 @@ export const Navigation = ({ contentView, setContentView }: INavigationProps) =>
         </button>
       </form>
 
-      <form className='navigation__sort'>
-        <button
-          type='button'
-          className='navigation__sort-button'
-          onClick={() => setSortType(!isSortTypeIncrease)}
-          data-test-id='sort-rating-button'
-        >
-          {isSortTypeIncrease ? <SortDescending /> : <SortAscending />}
-        </button>
-        <select id='sort' className={classNames('navigation__sort-kinds', { hidden: isSearchInputOpen })}>
-          <option value='rate'>По рейтингу</option>
-          <option value='date'>По дате</option>
-          <option value='price'>По цене</option>
-        </select>
-      </form>
+      <button
+        type='button'
+        className={classNames('navigation__sort', { hidden: isSearchInputOpen })}
+        onClick={() => setSortType(!isSortTypeIncrease)}
+        data-test-id='sort-rating-button'
+      >
+        {isSortTypeIncrease ? <SortDescending /> : <SortAscending />} По рейтингу
+      </button>
 
       <div className={classNames('navigation__display', { hidden: isSearchInputOpen })}>
         <input

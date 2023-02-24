@@ -15,14 +15,6 @@ import { getWindowWidth } from '../../utils/functions';
 
 import './menu.scss';
 
-// type IMenuProps = {
-//   // selectedCategory: string;
-//   // setSelectedCategory: React.Dispatch<React.SetStateAction<string>>;
-//   isSortTypeIncrease: boolean;
-//   searchQuery: string;
-//   // setSortType: React.Dispatch<React.SetStateAction<boolean>>;
-// };
-
 export const Menu = () => {
   const dispatch = useAppDispatch();
   const bookState = useTypedSelector((state) => state.bookReducer);
@@ -41,8 +33,6 @@ export const Menu = () => {
 
   const categories = useTypedSelector((state) => state.bookReducer.categories);
   const booksFromApi = useTypedSelector((state) => state.bookReducer.allBooks);
-  // const sortedBooksFromApi = booksFromApi.slice().sort((a, b) => (b.rating > a.rating ? 1 : 0));
-  // const { selectedCategory } = bookState;
   const error = Object.values(bookState.error).find((item) => item) as boolean;
   const loading = Object.values(bookState.loading).find((item) => item) as boolean;
 
@@ -55,7 +45,7 @@ export const Menu = () => {
     return booksFromApi.filter((book) => book.categories.includes(categoryName.name)).length;
   });
 
-  // const { isSortTypeIncrease } = useOutletContext<IOutletContext>();
+  const dataAttributeForMenu = getWindowWidth() > TABLET_BROAD_WIDTH ? 'navigation' : 'burger';
 
   const menuItems = categories.map((item, index) => {
     return (
@@ -65,8 +55,8 @@ export const Menu = () => {
           className='submenu__link'
           onClick={() => dispatch(setSelectedCategory(item.name))}
         >
-          <span data-test-id={`navigation-${item.path}`}>{item.name}</span>{' '}
-          <span data-test-id={`navigation-book-count-for${item.path}`}>{catCountArray[index]}</span>
+          <span data-test-id={`${dataAttributeForMenu}-${item.path}`}>{item.name}</span>{' '}
+          <span data-test-id={`${dataAttributeForMenu}-book-count-for-${item.path}`}>{catCountArray[index]}</span>
         </NavLink>
       </li>
     );
@@ -96,12 +86,11 @@ export const Menu = () => {
             <ul className={classNames('submenu__categories', { visible: isCategoriesVisible })}>
               <li className='submenu__cat' onClick={toggleMenuMode} onKeyDown={toggleMenuMode}>
                 <NavLink
-                  data-test-id='burger-books'
                   to='/books/all'
                   className={({ isActive }) => (isActive ? 'submenu__link active' : 'submenu__link')}
                   onClick={() => dispatch(setSelectedCategory('all'))}
                 >
-                  <span data-test-id='navigation-books'>Все книги</span>
+                  <span data-test-id={`${dataAttributeForMenu}-books`}>Все книги</span>
                   <span> </span>
                 </NavLink>
               </li>

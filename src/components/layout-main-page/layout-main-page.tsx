@@ -19,7 +19,6 @@ export const LayoutMainPage = () => {
 
   const dispatch = useAppDispatch();
   const bookState = useTypedSelector((state) => state.bookReducer);
-  // const categories = useTypedSelector((state) => state.bookReducer.categories);
   const booksFromApi = useTypedSelector((state) => state.bookReducer.allBooks);
   const { selectedCategory } = bookState;
 
@@ -30,7 +29,7 @@ export const LayoutMainPage = () => {
           setBooksToDisplay(
             booksFromApi
               .slice()
-              .filter((book) => book.title.includes(searchQuery))
+              .filter((book) => book.title.toLowerCase().includes(searchQuery.toLowerCase()))
               .sort((a, b) => a.rating - b.rating)
           )
         );
@@ -39,7 +38,7 @@ export const LayoutMainPage = () => {
           setBooksToDisplay(
             booksFromApi
               .slice()
-              .filter((book) => book.title.includes(searchQuery))
+              .filter((book) => book.title.toLowerCase().includes(searchQuery.toLowerCase()))
               .sort((a, b) => b.rating - a.rating)
           )
         );
@@ -51,7 +50,7 @@ export const LayoutMainPage = () => {
         const newBooksArrToDisplay = booksFromApi
           .slice()
           .filter((book) => book.categories.includes(selectedCategory))
-          .filter((book) => book.title.includes(searchQuery))
+          .filter((book) => book.title.toLowerCase().includes(searchQuery.toLowerCase()))
           .sort((a, b) => a.rating - b.rating);
 
         dispatch(setBooksToDisplay(newBooksArrToDisplay));
@@ -59,7 +58,7 @@ export const LayoutMainPage = () => {
         const newBooksArrToDisplay = booksFromApi
           .slice()
           .filter((book) => book.categories.includes(selectedCategory))
-          .filter((book) => book.title.includes(searchQuery))
+          .filter((book) => book.title.toLowerCase().includes(searchQuery.toLowerCase()))
           .sort((a, b) => b.rating - a.rating);
 
         dispatch(setBooksToDisplay(newBooksArrToDisplay));

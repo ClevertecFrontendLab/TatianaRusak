@@ -12,7 +12,7 @@
     }
   }
   @media (max-width: 930px) {
-    position: absolute;
+    position: fixed;
     left: -110%;
     top: 90px;
     &.open {

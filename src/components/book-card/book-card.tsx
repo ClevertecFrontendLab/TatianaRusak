@@ -35,8 +35,8 @@ export const BookCard = ({ book }: BookCardProps) => {
   const { searchQuery } = useOutletContext<IOutletContext>();
 
   return (
-    <li className='book' key={book.id} data-test-id='card'>
-      <div>
+    <li className='book' key={book.id}>
+      <div data-test-id='card'>
         <NavLink to={`/books/${actualCategory}/${book.id}`}>
           <div className={book.image ? 'book__image-wrapper' : 'book__image-wrapper not-found'}>
             {book.image && (
