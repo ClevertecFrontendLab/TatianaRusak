@@ -5,13 +5,14 @@ import React, { Fragment, useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import classNames from 'classnames';
 
+import { fetchSelectedBook } from '../../api/api';
 import { ReactComponent as Chevron } from '../../assets/icons/chevron.svg';
 import { Feedback } from '../../components/feedback/feedback';
 import { Loader } from '../../components/loader/loader';
 import { Rating } from '../../components/rating/rating';
 import { SwiperCarousel } from '../../components/SwiperCarousel/swiper-carousel';
 import { useTypedSelector } from '../../hooks/use-typed-selector';
-import { fetchSelectedBook } from '../../store/book-slice';
+import { setSelectedBook } from '../../store/book-slice';
 import { useAppDispatch } from '../../store/store';
 import { HOST } from '../../utils/constants';
 import { deliveryDate } from '../../utils/functions';
@@ -31,6 +32,10 @@ export const BookPage = () => {
     if (bookId) {
       dispatch(fetchSelectedBook(bookId));
     }
+
+    return () => {
+      dispatch(setSelectedBook(null));
+    };
   }, [bookId, dispatch]);
 
   const bookState = useTypedSelector((state) => state.bookReducer);

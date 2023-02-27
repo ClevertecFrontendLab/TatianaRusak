@@ -1,21 +1,21 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { useOutletContext } from 'react-router-dom';
 import { nanoid } from 'nanoid';
 
+import { fetchBooks } from '../../api/api';
 import { BookCard } from '../../components/book-card/book-card';
 import { IOutletContext } from '../../components/layout-main-page/layout-main-page';
 import { Navigation } from '../../components/navigation/navigation';
 import { useTypedSelector } from '../../hooks/use-typed-selector';
-import { fetchBooks, setBooksToDisplay } from '../../store/book-slice';
+import { setBooksToDisplay } from '../../store/book-slice';
 import { useAppDispatch } from '../../store/store';
 
 import './main-page.scss';
 
 export const MainPage = () => {
   const bookState = useTypedSelector((state) => state.bookReducer);
-  const booksFromApi = bookState.allBooks;
+  const booksFromApi = useMemo(() => bookState.allBooks, [bookState.allBooks]);
   const { selectedCategory } = bookState;
-  const sortedBooksFromApi = booksFromApi.slice().sort((a, b) => (b.rating > a.rating ? 1 : 0));
   const { booksToDisplay } = bookState;
   const [contentView, setContentView] = useState('content tile');
 
@@ -32,31 +32,59 @@ export const MainPage = () => {
 
   const dispatch = useAppDispatch();
 
+  const { isSortTypeIncrease, searchQuery } = useOutletContext<IOutletContext>();
+
   useEffect(() => {
     dispatch(fetchBooks());
   }, [dispatch]);
 
   useEffect(() => {
     if (selectedCategory === 'all') {
-      dispatch(setBooksToDisplay(sortedBooksFromApi));
+      if (isSortTypeIncrease) {
+        dispatch(
+          setBooksToDisplay(
+            booksFromApi
+              .slice()
+              .filter((book) => book.title.toLowerCase().includes(searchQuery.toLowerCase()))
+              .sort((a, b) => a.rating - b.rating)
+          )
+        );
+      } else {
+        dispatch(
+          setBooksToDisplay(
+            booksFromApi
+              .slice()
+              .filter((book) => book.title.toLowerCase().includes(searchQuery.toLowerCase()))
+              .sort((a, b) => b.rating - a.rating)
+          )
+        );
+      }
     } else {
-      const bookArrToDisplay = booksFromApi.slice().filter((book) => book.categories.includes(selectedCategory));
+      const booksFromApiFilteredByCategory = booksFromApi
+        .slice()
+        .filter((book) => book.categories.includes(selectedCategory));
 
-      dispatch(setBooksToDisplay(bookArrToDisplay));
+      if (isSortTypeIncrease) {
+        dispatch(
+          setBooksToDisplay(
+            booksFromApiFilteredByCategory
+              .slice()
+              .filter((book) => book.title.toLowerCase().includes(searchQuery.toLowerCase()))
+              .sort((a, b) => a.rating - b.rating)
+          )
+        );
+      } else {
+        dispatch(
+          setBooksToDisplay(
+            booksFromApiFilteredByCategory
+              .slice()
+              .filter((book) => book.title.toLowerCase().includes(searchQuery.toLowerCase()))
+              .sort((a, b) => b.rating - a.rating)
+          )
+        );
+      }
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [booksFromApi]);
-
-  const { isSortTypeIncrease } = useOutletContext<IOutletContext>();
-
-  useEffect(() => {
-    if (isSortTypeIncrease) {
-      dispatch(setBooksToDisplay(booksToDisplay.slice().sort((a, b) => a.rating - b.rating)));
-    } else {
-      dispatch(setBooksToDisplay(booksToDisplay.slice().sort((a, b) => b.rating - a.rating)));
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isSortTypeIncrease]);
+  }, [isSortTypeIncrease, selectedCategory, booksFromApi, dispatch, searchQuery]);
 
   return (
     <main>

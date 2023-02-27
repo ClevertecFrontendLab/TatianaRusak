@@ -1,61 +1,9 @@
 /* eslint-disable no-param-reassign */
-import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import axios from 'axios';
+import { createSlice } from '@reduxjs/toolkit';
 
+import { fetchBooks, fetchCategories, fetchSelectedBook } from '../api/api';
 import { RootState } from '../hooks/use-typed-selector';
-import { IBookCard, IBookDetailed, IBookState, ICategory, IResponceFail } from '../types';
-import { HOST } from '../utils/constants';
-
-export const fetchBooks = createAsyncThunk<IBookCard[], undefined, { rejectValue: IResponceFail }>(
-  'book/fetchBooks',
-  async () => {
-    try {
-      const responce = await axios.get(`${HOST}/api/books/`);
-
-      if (responce.status !== 200) {
-        throw new Error(responce.data);
-      }
-
-      return responce.data;
-    } catch (error) {
-      return (error as IResponceFail).error.message;
-    }
-  }
-);
-
-export const fetchCategories = createAsyncThunk<ICategory[], undefined, { rejectValue: IResponceFail }>(
-  'book/fetchCategories',
-  async () => {
-    try {
-      const responce = await axios.get(`${HOST}/api/categories`);
-
-      if (responce.status !== 200) {
-        throw new Error(responce.data);
-      }
-
-      return responce.data;
-    } catch (error) {
-      return (error as IResponceFail).error.message;
-    }
-  }
-);
-
-export const fetchSelectedBook = createAsyncThunk<IBookDetailed, string, { rejectValue: IResponceFail }>(
-  'book/fetchSelectedBook',
-  async (id) => {
-    try {
-      const responce = await axios.get(`${HOST}/api/books/${id}`);
-
-      if (responce.status !== 200) {
-        throw new Error(responce.data);
-      }
-
-      return responce.data;
-    } catch (error) {
-      return (error as IResponceFail).error.message;
-    }
-  }
-);
+import { IBookState } from '../types';
 
 const initialState: IBookState = {
   categories: [],
@@ -86,6 +34,9 @@ const bookSlice = createSlice({
     setBooksToDisplay(state, action) {
       state.booksToDisplay = action.payload;
     },
+    setSelectedBook(state, action) {
+      state.selectedBook = action.payload;
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -95,7 +46,6 @@ const bookSlice = createSlice({
       })
       .addCase(fetchBooks.fulfilled, (state, action) => {
         state.allBooks = action.payload;
-        state.booksToDisplay = action.payload.sort((a, b) => b.rating - a.rating);
         state.error.fetchBooks = false;
         state.loading.fetchBooks = false;
       })
@@ -133,5 +83,5 @@ const bookSlice = createSlice({
 });
 
 export const selectAllBooks = (state: RootState) => state.bookReducer.allBooks;
-export const { setSelectedCategory, setBooksToDisplay } = bookSlice.actions;
+export const { setSelectedCategory, setBooksToDisplay, setSelectedBook } = bookSlice.actions;
 export const bookReducer = bookSlice.reducer;
