@@ -5,6 +5,8 @@ import { HashRouter, Navigate, Route, Routes } from 'react-router-dom';
 
 import { Layout } from './components/layout/layout';
 import { LayoutMainPage } from './components/layout-main-page/layout-main-page';
+import { RequireAuth } from './hoc/require-auth';
+import { LoginPage } from './pages/authorization/login-page';
 import { BookPage } from './pages/book';
 import { MainPage } from './pages/main';
 import { RulesPage } from './pages/rules/rules-page';
@@ -19,7 +21,15 @@ root.render(
     <Provider store={store}>
       <HashRouter>
         <Routes>
-          <Route path='/' element={<Layout />}>
+          <Route path='/login' element={<LoginPage />} />
+          <Route
+            path='/'
+            element={
+              <RequireAuth>
+                <Layout />
+              </RequireAuth>
+            }
+          >
             <Route element={<LayoutMainPage />}>
               <Route index={true} element={<Navigate to='/books/all' />} />
               <Route path='/books/all' element={<MainPage />} />
