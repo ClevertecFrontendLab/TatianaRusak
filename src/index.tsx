@@ -7,6 +7,7 @@ import { Layout } from './components/layout/layout';
 import { LayoutMainPage } from './components/layout-main-page/layout-main-page';
 import { RequireAuth } from './hoc/require-auth';
 import { LoginPage } from './pages/authorization/login-page';
+import { RegistrationPage } from './pages/authorization/registration-page';
 import { BookPage } from './pages/book';
 import { MainPage } from './pages/main';
 import { RulesPage } from './pages/rules/rules-page';
@@ -22,6 +23,7 @@ root.render(
       <HashRouter>
         <Routes>
           <Route path='/login' element={<LoginPage />} />
+          <Route path='/registration' element={<RegistrationPage />} />
           <Route
             path='/'
             element={
