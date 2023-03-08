@@ -65,6 +65,9 @@
     padding: 26px 12px 12px;
     outline: none;
     // mix-blend-mode: normal;
+    &.isError {
+      border-bottom: solid 1px $color-text-error;
+    }
   }
   &__input:focus ~ label,
   &__input:valid ~ label {
@@ -102,6 +105,11 @@
     color: #ffffff;
     border: none;
     margin-bottom: 16px;
+    :disabled {
+      pointer-events: none;
+      background: #000;
+      cursor: auto;
+    }
   }
   &__registration-question {
     font-size: 16px;
