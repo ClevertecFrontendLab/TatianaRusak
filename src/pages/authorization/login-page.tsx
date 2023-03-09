@@ -61,80 +61,84 @@ const LoginPage = () => {
       )}
       <div className='auth__wrapper'>
         <div className='auth__inner'>
-          {!errorAny && (
-            <div className='auth__form'>
-              <div className='auth__title-block'>
-                <h1 className='auth__title'>Вход в личный кабинет</h1>
-              </div>
-              <form onSubmit={handleSubmit(onSubmit)}>
-                <div className='auth__inputs-set'>
-                  <div className='auth__input-group'>
-                    <input
-                      type='text'
-                      className={classNames('auth__input', { isError: !!errors.identifier?.message || error400 })}
-                      required={true}
-                      {...register('identifier', { required: true })}
-                    />
-                    <label htmlFor='login' className='auth__label'>
-                      Логин
-                    </label>
-                    <div className='auth__error-hint'>
-                      {/* {isDirty && !errors.identifier?.message && 'Поле не может быть пустым'} */}
-                      {errors.identifier && (
-                        <span dangerouslySetInnerHTML={{ __html: `${errors.identifier?.message}` }} />
-                      )}
-                    </div>
-                  </div>
-                  <div className='auth__input-group'>
-                    <input
-                      type={isShown ? 'text' : 'password'}
-                      className={classNames('auth__input', { isError: !!errors.password?.message || error400 })}
-                      {...register('password', { required: true })}
-                      required={true}
-                      value={passwordValue}
-                      onChange={(e) => setPasswordValue(e.currentTarget.value)}
-                    />
-                    <label htmlFor='password' className='auth__label'>
-                      Пароль
-                    </label>
-                    <div className='auth__password-eye' onClick={() => setIsSHown(!isShown)} role='presentation'>
-                      {!!passwordValue && isShown && <EyeOpen />}
-                      {!!passwordValue && !isShown && <EyeClose />}
-                    </div>
-                    <div className='auth__error-hint'>
-                      {/* {isDirty && !errors.password?.message && 'Поле не может быть пустым'} */}
-                      {errors.password && <span dangerouslySetInnerHTML={{ __html: `${errors.password?.message}` }} />}
-                    </div>
-                  </div>
+          <div className='auth__inner-box'>
+            {!errorAny && (
+              <div className='auth__form'>
+                <div className='auth__title-block'>
+                  <h1 className='auth__title'>Вход в личный кабинет</h1>
                 </div>
-
-                {!error400 && (
-                  <div className='auth__forgot-question'>
-                    <NavLink to='/password-recovery'>Забыли логин или пароль?</NavLink>
+                <form onSubmit={handleSubmit(onSubmit)}>
+                  <div className='auth__inputs-set'>
+                    <div className='auth__input-group'>
+                      <input
+                        type='text'
+                        className={classNames('auth__input', { isError: !!errors.identifier?.message || error400 })}
+                        required={true}
+                        {...register('identifier', { required: true })}
+                      />
+                      <label htmlFor='login' className='auth__label'>
+                        Логин
+                      </label>
+                      <div className='auth__error-hint'>
+                        {/* {isDirty && !errors.identifier?.message && 'Поле не может быть пустым'} */}
+                        {errors.identifier && (
+                          <span dangerouslySetInnerHTML={{ __html: `${errors.identifier?.message}` }} />
+                        )}
+                      </div>
+                    </div>
+                    <div className='auth__input-group'>
+                      <input
+                        type={isShown ? 'text' : 'password'}
+                        className={classNames('auth__input', { isError: !!errors.password?.message || error400 })}
+                        {...register('password', { required: true })}
+                        required={true}
+                        value={passwordValue}
+                        onChange={(e) => setPasswordValue(e.currentTarget.value)}
+                      />
+                      <label htmlFor='password' className='auth__label'>
+                        Пароль
+                      </label>
+                      <div className='auth__password-eye' onClick={() => setIsSHown(!isShown)} role='presentation'>
+                        {!!passwordValue && isShown && <EyeOpen />}
+                        {!!passwordValue && !isShown && <EyeClose />}
+                      </div>
+                      <div className='auth__error-hint'>
+                        {/* {isDirty && !errors.password?.message && 'Поле не может быть пустым'} */}
+                        {errors.password && (
+                          <span dangerouslySetInnerHTML={{ __html: `${errors.password?.message}` }} />
+                        )}
+                      </div>
+                    </div>
                   </div>
-                )}
 
-                {error400 && (
-                  <div className='auth__error-block'>
-                    <span className='auth__error'>Неверный логин или пароль!</span>
-                    <NavLink to='/password-recovery'>Восстановить?</NavLink>
-                  </div>
-                )}
+                  {!error400 && (
+                    <div className='auth__forgot-question'>
+                      <NavLink to='/forgot-password'>Забыли логин или пароль?</NavLink>
+                    </div>
+                  )}
 
-                <button type='submit' className='auth__btn'>
-                  вход
-                </button>
-              </form>
+                  {error400 && (
+                    <div className='auth__error-block'>
+                      <span className='auth__error'>Неверный логин или пароль!</span>
+                      <NavLink to='/forgot-password'>Восстановить?</NavLink>
+                    </div>
+                  )}
 
-              <div className='auth__registration-question'>
-                Нет учётной записи?{' '}
-                <NavLink to='/registration' className='auth__registration-link'>
-                  Регистрация
-                  <Arrow />
-                </NavLink>
+                  <button type='submit' className='auth__btn'>
+                    вход
+                  </button>
+                </form>
+
+                <div className='auth__registration-question'>
+                  Нет учётной записи?{' '}
+                  <NavLink to='/registration' className='auth__registration-link'>
+                    Регистрация
+                    <Arrow />
+                  </NavLink>
+                </div>
               </div>
-            </div>
-          )}
+            )}
+          </div>
           {errorAny && (
             <AuthInfo title='Вход не выполнен' text='Что-то пошло не так. Попробуйте ещё раз' buttonText='повторить' />
           )}

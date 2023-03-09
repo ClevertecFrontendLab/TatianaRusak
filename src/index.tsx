@@ -6,6 +6,7 @@ import { HashRouter, Navigate, Route, Routes } from 'react-router-dom';
 import { Layout } from './components/layout/layout';
 import { LayoutMainPage } from './components/layout-main-page/layout-main-page';
 import { RequireAuth } from './hoc/require-auth';
+import { ForgotPasswordPage } from './pages/authorization/forgot-password';
 import { LoginPage } from './pages/authorization/login-page';
 import { RegistrationPage } from './pages/authorization/registration-page';
 import { BookPage } from './pages/book';
@@ -24,6 +25,7 @@ root.render(
         <Routes>
           <Route path='/login' element={<LoginPage />} />
           <Route path='/registration' element={<RegistrationPage />} />
+          <Route path='/forgot-password' element={<ForgotPasswordPage />} />
           <Route
             path='/'
             element={
