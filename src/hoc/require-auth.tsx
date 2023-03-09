@@ -6,13 +6,14 @@ interface Props {
 }
 
 const RequireAuth = ({ children }: Props) => {
-  const auth = false;
+  const token = localStorage.getItem('token');
 
-  if (!auth) {
-    return <Navigate to='/login' />;
-  }
+  return token ? children : <Navigate to='/login' />;
+  // if (!token) {
+  //   return <Navigate to='/login' />;
+  // }
 
-  return children;
+  // return children;
 };
 
 export { RequireAuth };

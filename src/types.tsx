@@ -1,3 +1,5 @@
+import { ISignUpResponse } from './api/api-auth';
+
 export interface IHistory {
   id: number;
   userId: number;
@@ -101,4 +103,13 @@ export interface IResponceFail {
     message: string;
     details: object;
   };
+}
+
+export interface IAuthState {
+  // isLoggedIn: boolean;
+  user: Pick<ISignUpResponse, 'user'> | null;
+  token: string;
+  loading?: boolean;
+  errorAny: boolean;
+  error400: boolean;
 }

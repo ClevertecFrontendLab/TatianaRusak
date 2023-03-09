@@ -1,42 +1,23 @@
+/* eslint-disable complexity */
 /* eslint-disable react/no-danger */
 /* eslint-disable import/no-extraneous-dependencies */
-import React, { useState } from 'react';
+import React, { Fragment, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
-import { NavLink } from 'react-router-dom';
+import { Navigate, NavLink, useNavigate } from 'react-router-dom';
 import MaskedInput from 'react-text-mask';
 import { yupResolver } from '@hookform/resolvers/yup';
 import classNames from 'classnames';
-import * as yup from 'yup';
 
+import { userSignUp } from '../../api/api-auth';
 import { ReactComponent as Arrow } from '../../assets/icons/arrow.svg';
 import { ReactComponent as EyeClose } from '../../assets/icons/eye-close.svg';
 import { ReactComponent as EyeOpen } from '../../assets/icons/eye-open.svg';
+import { Loader } from '../../components/loader/loader';
+import { useTypedSelector } from '../../hooks/use-typed-selector';
+import { useAppDispatch } from '../../store/store';
+import { IRegistrationFormData, schemaRegistration } from '../../validations/registration';
 
 import './authorization.scss';
-
-const schema = yup
-  .object({
-    login: yup
-      .string()
-      .required('<span class="auth__error">Используйте для логина латинский алфавит и цифры</span>')
-      .matches(/\d/, 'Используйте для логина латинский алфавит и <span class="auth__error">цифры</span>')
-      .matches(/[A-Za-z]/, 'Используйте для логина <span class="auth__error">латинский алфавит</span> и цифры')
-      .matches(/^[A-Za-z0-9]+$/, '<span class="auth__error">Используйте для логина латинский алфавит и цифры </span>'),
-    password: yup.string().required('Поле не может быть пустым'),
-    firstName: yup.string().required('<span class="auth__error">Поле не может быть пустым<span>'),
-    secondName: yup.string().required('<span class="auth__error">Поле не может быть пустым<span>'),
-    phone: yup
-      .string()
-      .required('<span class="auth__error">В формате +375 (xx) xxx-xx-xx<span>')
-      .test((value) => value.trim().length > 6),
-    email: yup
-      .string()
-      .required('<span class="auth__error">Введите корректный e-mail<span>')
-      .email('<span class="auth__error">Введите корректный e-mail<span>'),
-  })
-  .required();
-
-type FormData = yup.InferType<typeof schema>;
 
 const RegistrationPage = () => {
   const {
@@ -44,240 +25,244 @@ const RegistrationPage = () => {
     handleSubmit,
     control,
     formState: { errors, isDirty },
+    reset,
     // watch,
-  } = useForm<FormData>({
-    resolver: yupResolver(schema),
+  } = useForm<IRegistrationFormData>({
+    resolver: yupResolver(schemaRegistration),
     mode: 'all',
     criteriaMode: 'all',
   });
 
   const [step, setStep] = useState(1);
   const [isShown, setIsSHown] = useState(false);
-  // const [loginValue] = useState('');
   const [passwordValue, setPasswordValue] = useState('');
-  // const [phoneValue, setPhoneValue] = useState('');
-  // const [isMistake] = useState(true);
+  const authState = useTypedSelector((state) => state.authReducer);
+  const { loading } = authState;
+  // const navigate = useNavigate();
+  const token = localStorage.getItem('token');
 
-  // console.log('isValid', isValid);
-  // console.log('isDirty', isDirty);
-  // console.log('errors', errors);
+  const dispatch = useAppDispatch();
 
-  // const [login, password] = watch(['login', 'password']);
+  const onSubmit = (data: IRegistrationFormData) => {
+    dispatch(userSignUp(data));
 
-  const onSubmit = (data: FormData) => {
+    // if (!loading) {
+    //   navigate('/');
+    // }
+
+    // navigate('/');
+    reset();
+
     console.log('submit');
-    console.log('data', data);
+    // console.log('data', data);
+    // console.log('testData', testData);
   };
-  // const loginValidate = (e: ChangeEvent<HTMLInputElement>) => {
-  //   const loginCurrent = e.target.value;
-
-  //   setLoginValue(loginCurrent);
-
-  //   const isTestNumber = /^\d+$/.test(loginCurrent);
-
-  //   console.log('isTestNumber', isTestNumber);
-  //   console.log('loginCurrent', loginCurrent);
-  // };
-
-  // const passwordValidate = () => {
-  //   // console.log(password);
-  // };
-  // console.log(watch(['login', 'password']));
 
   const preValidate = () => {
-    if (step === 1 && isDirty && !errors.login && !errors.password) {
+    if (step === 1 && isDirty && !errors.username && !errors.password) {
       setStep(2);
       console.log(errors);
     }
-    if (step === 2 && isDirty && !errors.firstName && !errors.secondName) {
+    if (step === 2 && isDirty && !errors.firstName && !errors.lastName) {
       setStep(3);
       console.log(errors);
     }
   };
 
   return (
-    <div className='auth__wrapper'>
-      <div className='auth__inner'>
-        <div className='auth__title-block'>
-          <h1 className='auth__title'>Регистрация</h1>
-          <div className='auth__step'>{step} шаг из 3</div>
+    <Fragment>
+      {loading && (
+        <div className='loader__blur'>
+          <Loader />
         </div>
-        <form onSubmit={handleSubmit(onSubmit)}>
-          {step === 1 && (
-            <div className='auth__step-1'>
-              <div className='auth__inputs-set'>
-                <div className='auth__input-group'>
-                  <input
-                    type='text'
-                    // value={loginValue}
-                    className={classNames('auth__input', { isError: !!errors.login?.message })}
-                    {...register('login')}
-                    required={true}
-                  />
-                  <label htmlFor='login' className='auth__label'>
-                    Придумайте логин для входа
-                  </label>
-                  <div className='auth__error-hint'>
-                    {/* <span className={isMistake ? 'auth__error' : ''}>jhgjg</span> */}
-                    {isDirty && !errors.login?.message && 'Используйте для логина латинский алфавит и цифры'}
-                    {errors.login && <span dangerouslySetInnerHTML={{ __html: `${errors.login?.message}` }} />}
-                  </div>
-                </div>
-                <div className='auth__input-group'>
-                  <input
-                    type={isShown ? 'text' : 'password'}
-                    className='auth__input'
-                    {...register('password')}
-                    value={passwordValue}
-                    onChange={(e) => setPasswordValue(e.currentTarget.value)}
-                    required={true}
-                  />
-                  <label htmlFor='password' className='auth__label'>
-                    Пароль
-                  </label>
-                  <div className='auth__password-eye' onClick={() => setIsSHown(!isShown)} role='presentation'>
-                    {!!passwordValue && isShown && <EyeOpen />}
-                    {!!passwordValue && !isShown && <EyeClose />}
-                  </div>
-                  <div className='auth__error-hint'>{errors.password?.message}</div>
-                </div>
-              </div>
+      )}
 
-              <button
-                type='button'
-                onClick={preValidate}
-                className='auth__btn'
-                // disabled={!(isDirty && !errors.login?.message && !errors.password?.message)}
-              >
-                следующий шаг
-              </button>
+      {!loading && (
+        <div className='auth__wrapper'>
+          <div className='auth__inner'>
+            <div className='auth__title-block'>
+              <h1 className='auth__title'>Регистрация</h1>
+              <div className='auth__step'>{step} шаг из 3</div>
             </div>
-          )}
-
-          {step === 2 && (
-            <div className='auth__step-2'>
-              <div className='auth__inputs-set'>
-                <div className='auth__input-group'>
-                  <input
-                    type='text'
-                    className='auth__input'
-                    {...register('firstName', { required: true })}
-                    required={true}
-                  />
-                  <label htmlFor='firstName' className='auth__label'>
-                    Имя
-                  </label>
-                  <div className='auth__error-hint'>
-                    {errors.firstName && <span dangerouslySetInnerHTML={{ __html: `${errors.firstName?.message}` }} />}
-                  </div>
-                </div>
-                <div className='auth__input-group'>
-                  <input
-                    type='text'
-                    className='auth__input'
-                    {...register('secondName', { required: true })}
-                    // value={passwordValue}
-                    // onChange={(e) => setPasswordValue(e.currentTarget.value)}
-                    required={true}
-                  />
-                  <label htmlFor='secondName' className='auth__label'>
-                    Фамилия
-                  </label>
-                  <div className='auth__error-hint'>
-                    {errors.secondName && (
-                      <span dangerouslySetInnerHTML={{ __html: `${errors.secondName?.message}` }} />
-                    )}
-                  </div>
-                </div>
-              </div>
-
-              <button type='button' onClick={preValidate} className='auth__btn'>
-                следующий шаг
-              </button>
-            </div>
-          )}
-          {step === 3 && (
-            <div className='auth_step-3'>
-              <div className='auth__inputs-set'>
-                <div className='auth__input-group'>
-                  <Controller
-                    control={control}
-                    name='phone'
-                    render={({ field: { onChange } }) => (
-                      <MaskedInput
-                        mask={[
-                          '+',
-                          '3',
-                          '7',
-                          '5',
-                          '(',
-                          /\d/,
-                          /\d/,
-                          ')',
-                          ' ',
-                          /\d/,
-                          /\d/,
-                          /\d/,
-                          '-',
-                          /\d/,
-                          /\d/,
-                          '-',
-                          /\d/,
-                          /\d/,
-                        ]}
-                        className='auth__input'
-                        guide={true}
+            <form onSubmit={handleSubmit(onSubmit)}>
+              {step === 1 && (
+                <div className='auth__step-1'>
+                  <div className='auth__inputs-set'>
+                    <div className='auth__input-group'>
+                      <input
                         type='text'
-                        onChange={onChange}
-                        keepCharPositions={true}
+                        className={classNames('auth__input', { isError: !!errors.username?.message })}
+                        {...register('username')}
                         required={true}
                       />
-                    )}
-                  />
-
-                  <label htmlFor='phone' className='auth__label'>
-                    Номер телефона
-                  </label>
-                  <div className='auth__error-hint'>
-                    {errors.phone && <span dangerouslySetInnerHTML={{ __html: `${errors.phone?.message}` }} />}
+                      <label htmlFor='username' className='auth__label'>
+                        Придумайте логин для входа
+                      </label>
+                      <div className='auth__error-hint'>
+                        {isDirty && !errors.username?.message && 'Используйте для логина латинский алфавит и цифры'}
+                        {errors.username && (
+                          <span dangerouslySetInnerHTML={{ __html: `${errors.username?.message}` }} />
+                        )}
+                      </div>
+                    </div>
+                    <div className='auth__input-group'>
+                      <input
+                        type={isShown ? 'text' : 'password'}
+                        className='auth__input'
+                        {...register('password')}
+                        value={passwordValue}
+                        onChange={(e) => setPasswordValue(e.currentTarget.value)}
+                        required={true}
+                      />
+                      <label htmlFor='password' className='auth__label'>
+                        Пароль
+                      </label>
+                      <div className='auth__password-eye' onClick={() => setIsSHown(!isShown)} role='presentation'>
+                        {!!passwordValue && isShown && <EyeOpen />}
+                        {!!passwordValue && !isShown && <EyeClose />}
+                      </div>
+                      <div className='auth__error-hint'>
+                        {isDirty &&
+                          !errors.password?.message &&
+                          'Пароль не менее 8 символов, с заглавной буквой и цифрой'}
+                        {errors.password && (
+                          <span dangerouslySetInnerHTML={{ __html: `${errors.password?.message}` }} />
+                        )}
+                      </div>
+                    </div>
                   </div>
+                  <button type='button' onClick={preValidate} className='auth__btn'>
+                    следующий шаг
+                  </button>
                 </div>
-                <div className='auth__input-group'>
-                  <input
-                    type='text'
-                    className='auth__input'
-                    {...register('email', {
-                      required: true,
-                    })}
-                    required={true}
-                  />
-                  <label htmlFor='email' className='auth__label'>
-                    E-mail
-                  </label>
-                  <div className='auth__error-hint'>
-                    <div className='auth__error-hint'>
-                      {errors.email && <span dangerouslySetInnerHTML={{ __html: `${errors.email?.message}` }} />}
-                    </div>{' '}
-                  </div>
-                </div>
-              </div>
+              )}
 
-              <button type='submit' className='auth__btn'>
-                зарегистрироваться
-              </button>
+              {step === 2 && (
+                <div className='auth__step-2'>
+                  <div className='auth__inputs-set'>
+                    <div className='auth__input-group'>
+                      <input
+                        type='text'
+                        className='auth__input'
+                        {...register('firstName', { required: true })}
+                        required={true}
+                      />
+                      <label htmlFor='firstName' className='auth__label'>
+                        Имя
+                      </label>
+                      <div className='auth__error-hint'>
+                        {errors.firstName && (
+                          <span dangerouslySetInnerHTML={{ __html: `${errors.firstName?.message}` }} />
+                        )}
+                      </div>
+                    </div>
+                    <div className='auth__input-group'>
+                      <input
+                        type='text'
+                        className='auth__input'
+                        {...register('lastName', { required: true })}
+                        required={true}
+                      />
+                      <label htmlFor='lastName' className='auth__label'>
+                        Фамилия
+                      </label>
+                      <div className='auth__error-hint'>
+                        {errors.lastName && (
+                          <span dangerouslySetInnerHTML={{ __html: `${errors.lastName?.message}` }} />
+                        )}
+                      </div>
+                    </div>
+                  </div>
+
+                  <button type='button' onClick={preValidate} className='auth__btn'>
+                    следующий шаг
+                  </button>
+                </div>
+              )}
+              {step === 3 && (
+                <div className='auth_step-3'>
+                  <div className='auth__inputs-set'>
+                    <div className='auth__input-group'>
+                      <Controller
+                        control={control}
+                        name='phone'
+                        render={({ field: { onChange } }) => (
+                          <MaskedInput
+                            mask={[
+                              '+',
+                              '3',
+                              '7',
+                              '5',
+                              '(',
+                              /\d/,
+                              /\d/,
+                              ')',
+                              ' ',
+                              /\d/,
+                              /\d/,
+                              /\d/,
+                              '-',
+                              /\d/,
+                              /\d/,
+                              '-',
+                              /\d/,
+                              /\d/,
+                            ]}
+                            className='auth__input'
+                            guide={true}
+                            type='text'
+                            onChange={onChange}
+                            keepCharPositions={true}
+                            required={true}
+                          />
+                        )}
+                      />
+                      <label htmlFor='phone' className='auth__label'>
+                        Номер телефона
+                      </label>
+                      <div className='auth__error-hint'>
+                        {errors.phone && <span dangerouslySetInnerHTML={{ __html: `${errors.phone?.message}` }} />}
+                      </div>
+                    </div>
+                    <div className='auth__input-group'>
+                      <input
+                        type='text'
+                        className='auth__input'
+                        {...register('email', {
+                          required: true,
+                        })}
+                        required={true}
+                      />
+                      <label htmlFor='email' className='auth__label'>
+                        E-mail
+                      </label>
+                      <div className='auth__error-hint'>
+                        <div className='auth__error-hint'>
+                          {errors.email && <span dangerouslySetInnerHTML={{ __html: `${errors.email?.message}` }} />}
+                        </div>{' '}
+                      </div>
+                    </div>
+                  </div>
+
+                  <button type='submit' className='auth__btn'>
+                    зарегистрироваться
+                  </button>
+                </div>
+              )}
+            </form>
+
+            <div className='auth__registration-question'>
+              Есть учётная запись?{' '}
+              <NavLink to='/login' className='auth__registration-link'>
+                войти
+                <Arrow />
+              </NavLink>
             </div>
-          )}
-        </form>
-
-        <div className='auth__registration-question'>
-          Есть учётная запись?{' '}
-          <NavLink to='/login' className='auth__registration-link'>
-            войти
-            <Arrow />
-          </NavLink>
+          </div>
         </div>
-      </div>
-    </div>
+      )}
+      {token && <Navigate to='/' replace={true} />}
+    </Fragment>
   );
 };
 

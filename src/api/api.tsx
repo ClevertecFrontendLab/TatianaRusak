@@ -4,18 +4,35 @@ import axios from 'axios';
 import { IBookCard, IBookDetailed, ICategory, IResponceFail } from '../types';
 import { HOST } from '../utils/constants';
 
+axios.interceptors.request.use(
+  (config) => {
+    const token = localStorage.getItem('token');
+    const newConfig = config;
+
+    if (token) {
+      newConfig.headers.Authorization = `Bearer ${token}`;
+    }
+
+    return config;
+  },
+
+  (error) => {
+    return Promise.reject(error);
+  }
+);
+
 export const fetchBooks = createAsyncThunk<IBookCard[], undefined, { rejectValue: IResponceFail }>(
   'book/fetchBooks',
 
   async () => {
     try {
-      const responce = await axios.get(`${HOST}/api/books/`);
+      const response = await axios.get(`${HOST}/api/books/`);
 
-      if (responce.status !== 200) {
-        throw new Error(responce.data);
+      if (response.status !== 200) {
+        throw new Error(response.data);
       }
 
-      return responce.data;
+      return response.data;
     } catch (error) {
       return (error as IResponceFail).error.message;
     }
