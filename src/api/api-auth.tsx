@@ -1,7 +1,6 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import axios, { AxiosError } from 'axios';
 
-import { IResponceFail } from '../types';
 import { HOST } from '../utils/constants';
 
 export interface IUserSignUpData {
@@ -45,6 +44,20 @@ export interface IUserLogInData {
   password: string;
 }
 
+export interface IForgotPasswordResponse {
+  ok: true;
+}
+
+export interface IForgotPasswordData {
+  email: string;
+}
+
+export interface IChangePasswordData {
+  password: string;
+  passwordConfirmation: string;
+  code: string;
+}
+
 export const userSignUp = createAsyncThunk<ISignUpResponse, IUserSignUpData, { rejectValue: ISignUpError }>(
   'authentication/sighUp',
 
@@ -79,6 +92,36 @@ export const userLogIn = createAsyncThunk<ISignUpResponse, IUserLogInData, { rej
       return response.data;
     } catch (error) {
       return rejectWithValue(error as AxiosError);
+    }
+  }
+);
+
+export const sendLinkIfForgotPassword = createAsyncThunk<IForgotPasswordResponse, IForgotPasswordData>(
+  'authentication/forgotPassword',
+
+  async (userEmail) => {
+    try {
+      const response = await axios.post(`${HOST}/api/auth/forgot-password`, userEmail);
+
+      return response.data;
+    } catch (error) {
+      return error as AxiosError;
+    }
+  }
+);
+
+export const changePassword = createAsyncThunk<ISignUpResponse, IChangePasswordData, { rejectValue: AxiosError }>(
+  'authentication/changePassword',
+
+  async (newPasswordData) => {
+    console.log('замена произошла');
+
+    try {
+      const response = await axios.post(`${HOST}/api/auth/reset-password`, newPasswordData);
+
+      return response.data;
+    } catch (error) {
+      return error as AxiosError;
     }
   }
 );

@@ -13,6 +13,7 @@ import { TABLET_BROAD_WIDTH } from '../../utils/constants';
 import { getWindowWidth } from '../../utils/functions';
 
 import './menu.scss';
+import { logOut } from '../../store/auth-slice';
 
 export const Menu = () => {
   const dispatch = useAppDispatch();
@@ -69,9 +70,15 @@ export const Menu = () => {
     );
   });
 
+  const logOutHandle = () => {
+    dispatch(logOut());
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
+  };
+
   return (
     <aside className={classNames('menu', { open: isOpened }, { hidden: !!bookId })} data-test-id='burger-navigation'>
-      <ul className='menu_list'>
+      <ul className='menu__list'>
         <li className='menu__item '>
           <NavLink
             to='/books/all'
@@ -130,6 +137,20 @@ export const Menu = () => {
             >
               Договор оферты
             </h5>
+          </NavLink>
+        </li>
+      </ul>
+      <ul className='menu-user__list'>
+        <li className='menu-user__item menu__item'>
+          <NavLink to='/' className='menu__link'>
+            <h5 role='presentation' onClick={() => null}>
+              Профиль
+            </h5>
+          </NavLink>
+        </li>
+        <li className='menu-user__item menu__item'>
+          <NavLink to='/login' className='menu__link' onClick={logOutHandle}>
+            <h5>Выход</h5>
           </NavLink>
         </li>
       </ul>

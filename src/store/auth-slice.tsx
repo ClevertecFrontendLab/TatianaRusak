@@ -1,8 +1,7 @@
 /* eslint-disable no-param-reassign */
 import { createSlice } from '@reduxjs/toolkit';
-import { AxiosError } from 'axios';
 
-import { userLogIn, userSignUp } from '../api/api-auth';
+import { changePassword, sendLinkIfForgotPassword, userLogIn, userSignUp } from '../api/api-auth';
 import { IAuthState } from '../types';
 
 const getInitalState: () => IAuthState = () => {
@@ -15,6 +14,9 @@ const getInitalState: () => IAuthState = () => {
     token: '',
     errorAny: false,
     error400: false,
+    resetLetterIsSent: false,
+    passwordIsChanged: false,
+    errorMessage: '',
   };
 
   if (token && user) {
@@ -38,16 +40,10 @@ export const authSlice = createSlice({
   name: 'authentication',
   initialState: getInitalState(),
   reducers: {
-    logOff(state) {
-      // state.isLoggedIn = false;
+    logOut(state) {
       state.token = '';
       state.user = null;
     },
-    // signIn(state, action: PayloadAction<ISignInOk>) {
-    //   state.isLoggedIn = true;
-    //   state.user = action.payload;
-    //   state.token = action.payload.token;
-    // },
   },
 
   extraReducers: (builder) => {
@@ -85,8 +81,42 @@ export const authSlice = createSlice({
         } else {
           state.errorAny = true;
         }
+      })
+      .addCase(sendLinkIfForgotPassword.pending, (state, action) => {
+        state.loading = true;
+        state.errorMessage = '';
+      })
+      .addCase(sendLinkIfForgotPassword.fulfilled, (state, action) => {
+        state.loading = false;
+        state.error400 = false;
+        state.errorAny = false;
+        state.resetLetterIsSent = true;
+        state.errorMessage = '';
+      })
+      .addCase(sendLinkIfForgotPassword.rejected, (state, action) => {
+        state.loading = false;
+        state.errorAny = true;
+        state.resetLetterIsSent = false;
+        state.errorMessage = action.error?.message;
+      })
+      .addCase(changePassword.pending, (state, action) => {
+        state.loading = true;
+        state.errorAny = false;
+        state.passwordIsChanged = false;
+      })
+      .addCase(changePassword.fulfilled, (state, action) => {
+        state.loading = false;
+        state.error400 = false;
+        state.errorAny = false;
+        state.passwordIsChanged = true;
+      })
+      .addCase(changePassword.rejected, (state, action) => {
+        state.loading = false;
+        state.errorAny = true;
+        state.passwordIsChanged = false;
       });
   },
 });
 
+export const { logOut } = authSlice.actions;
 export const authReducer = authSlice.reducer;

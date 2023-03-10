@@ -30,7 +30,7 @@
       @media (max-width: 768px) {
         width: 350px;
         left: 16px;
-        padding: 32px 16px 52px;
+        padding: 32px 16px 10px;
       }
       @media (max-width: 600px) {
         width: 280px;
@@ -120,5 +120,14 @@
         color: $color-text-light;
       }
     }
+  }
+}
+
+.menu-user {
+  position: static;
+  &__list {
+    width: 80%;
+    border-top: 1px solid #bfc4c9;
+    padding: 32px 0 0;
   }
 }

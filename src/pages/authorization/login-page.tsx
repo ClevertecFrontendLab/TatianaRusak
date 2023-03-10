@@ -14,8 +14,9 @@ import { useTypedSelector } from '../../hooks/use-typed-selector';
 import { useAppDispatch } from '../../store/store';
 import { ILogInFormData, schemaLogIn } from '../../validations/log-in';
 
-import './authorization.scss';
 import { AuthInfo } from './auth-info';
+
+import './authorization.scss';
 
 const LoginPage = () => {
   const {
@@ -113,14 +114,14 @@ const LoginPage = () => {
 
                   {!error400 && (
                     <div className='auth__forgot-question'>
-                      <NavLink to='/forgot-password'>Забыли логин или пароль?</NavLink>
+                      <NavLink to='/forgot-pass'>Забыли логин или пароль?</NavLink>
                     </div>
                   )}
 
                   {error400 && (
                     <div className='auth__error-block'>
                       <span className='auth__error'>Неверный логин или пароль!</span>
-                      <NavLink to='/forgot-password'>Восстановить?</NavLink>
+                      <NavLink to='/forgot-pass'>Восстановить?</NavLink>
                     </div>
                   )}
 
@@ -140,7 +141,7 @@ const LoginPage = () => {
             )}
           </div>
           {errorAny && (
-            <AuthInfo title='Вход не выполнен' text='Что-то пошло не так. Попробуйте ещё раз' buttonText='повторить' />
+            <AuthInfo title='Вход не выполнен' text='Что-то пошло не так. Попробуйте ещё раз' direction='повторить' />
           )}
         </div>
       </div>

@@ -112,4 +112,7 @@ export interface IAuthState {
   loading?: boolean;
   errorAny: boolean;
   error400: boolean;
+  resetLetterIsSent: boolean;
+  errorMessage?: string;
+  passwordIsChanged: boolean;
 }

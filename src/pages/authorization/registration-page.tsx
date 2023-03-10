@@ -3,7 +3,7 @@
 /* eslint-disable import/no-extraneous-dependencies */
 import React, { Fragment, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
-import { Navigate, NavLink, useNavigate } from 'react-router-dom';
+import { NavLink } from 'react-router-dom';
 import MaskedInput from 'react-text-mask';
 import { yupResolver } from '@hookform/resolvers/yup';
 import classNames from 'classnames';
@@ -16,6 +16,8 @@ import { Loader } from '../../components/loader/loader';
 import { useTypedSelector } from '../../hooks/use-typed-selector';
 import { useAppDispatch } from '../../store/store';
 import { IRegistrationFormData, schemaRegistration } from '../../validations/registration';
+
+import { AuthInfo } from './auth-info';
 
 import './authorization.scss';
 
@@ -37,9 +39,12 @@ const RegistrationPage = () => {
   const [isShown, setIsSHown] = useState(false);
   const [passwordValue, setPasswordValue] = useState('');
   const authState = useTypedSelector((state) => state.authReducer);
+  const { user } = authState;
   const { loading } = authState;
+  const { error400 } = authState;
+  const { errorAny } = authState;
   // const navigate = useNavigate();
-  const token = localStorage.getItem('token');
+  // const token = localStorage.getItem('token');
 
   const dispatch = useAppDispatch();
 
@@ -77,7 +82,7 @@ const RegistrationPage = () => {
         </div>
       )}
 
-      {!loading && (
+      {!loading && !user && (
         <div className='auth__wrapper'>
           <div className='auth__inner'>
             <div className='auth__inner-box'>
@@ -263,7 +268,28 @@ const RegistrationPage = () => {
           </div>
         </div>
       )}
-      {token && <Navigate to='/' replace={true} />}
+      {/* {token && <Navigate to='/' replace={true} />} */}
+      {!error400 && !errorAny && (
+        <AuthInfo
+          title='Регистрация успешна'
+          text='Регистрация прошла успешно. Зайдите в личный кабинет, используя свои логин и пароль'
+          direction='login'
+        />
+      )}
+      {error400 && (
+        <AuthInfo
+          title='Данные не сохранились'
+          text='Такой логин или e-mail уже записан в системе. Попробуйте зарегистрироваться по другому логину или e-mail'
+          direction='registration'
+        />
+      )}
+      {errorAny && (
+        <AuthInfo
+          title='Данные не сохранились'
+          text='Что-то пошло не так и ваша регистрация не завершилась. Попробуйте ещё раз'
+          direction='refresh'
+        />
+      )}
     </Fragment>
   );
 };
