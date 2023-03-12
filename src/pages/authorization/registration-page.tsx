@@ -42,8 +42,12 @@ const RegistrationPage = () => {
   const [isShown, setIsSHown] = useState(false);
   const [usernameValue, setUsernameValue] = useState('');
   const [passwordValue, setPasswordValue] = useState('');
+  const [firstnameValue, setFirstnameValue] = useState('');
+  const [lastnameValue, setLastnameValue] = useState('');
   const [phoneErrorShow, setPhoneErrorShow] = useState(true);
   const [isUsernameFieldHasError, setUsernameFieldHasError] = useState(false);
+  const [isFirstnameFieldHasError, setFirstnameFieldHasError] = useState(false);
+  const [isLastnameFieldHasError, setLastnameFieldHasError] = useState(false);
   const [isPasswordFieldHasError, setPasswordFieldHasError] = useState(false);
   // const [isFieldNotValid, setFieldNotValid] = useState(!!errors.username?.message);
   const authState = useTypedSelector((state) => state.authReducer);
@@ -151,7 +155,14 @@ const RegistrationPage = () => {
       setStep(2);
       console.log(errors);
     }
-    if (step === 2 && isDirty && !errors.firstName && !errors.lastName) {
+
+    if (step === 2 && !dirtyFields.firstName) {
+      setFirstnameFieldHasError(true);
+    }
+    if (step === 2 && !dirtyFields.lastName) {
+      setLastnameFieldHasError(true);
+    }
+    if (step === 2 && usernameValue && passwordValue) {
       setStep(3);
       console.log(errors);
     }
@@ -264,37 +275,52 @@ const RegistrationPage = () => {
                       <div className='auth__input-group'>
                         <input
                           type='text'
-                          className='auth__input'
+                          className={classNames('auth__input', {
+                            isError: isFirstnameFieldHasError && !firstnameValue,
+                          })}
                           {...register('firstName', { required: true })}
                           required={true}
+                          onChange={(e) => {
+                            setFirstnameValue(e.currentTarget.value);
+                            setFirstnameFieldHasError(false);
+                          }}
+                          onBlur={() => {
+                            setFirstnameFieldHasError(true);
+                          }}
                         />
                         <label htmlFor='firstName' className='auth__label'>
                           Имя
                         </label>
-                        {errors.firstName && (
-                          <div className='auth__error-hint'>
-                            <span dangerouslySetInnerHTML={{ __html: `${errors.firstName?.message}` }} />
-                          </div>
-                        )}
+                        <div className='auth__error-hint'>
+                          {isFirstnameFieldHasError && !firstnameValue && (
+                            <span className='auth__error'>Поле не может быть пустым</span>
+                          )}
+                        </div>
                       </div>
                       <div className='auth__input-group'>
                         <input
                           type='text'
-                          className='auth__input'
+                          className={classNames('auth__input', {
+                            isError: isLastnameFieldHasError && !lastnameValue,
+                          })}
                           {...register('lastName', { required: true })}
                           required={true}
+                          onChange={(e) => {
+                            setLastnameValue(e.currentTarget.value);
+                            setLastnameFieldHasError(false);
+                          }}
+                          onBlur={() => {
+                            setLastnameFieldHasError(true);
+                          }}
                         />
                         <label htmlFor='lastName' className='auth__label'>
                           Фамилия
                         </label>
-                        {/* {isDirty && !errors.username?.message && (
-                          <span className='auth__error-hint'>Используйте для логина латинский алфавит и цифры</span>
-                        )} */}
-                        {errors.lastName && (
-                          <div className='auth__error-hint'>
-                            <span dangerouslySetInnerHTML={{ __html: `${errors.lastName?.message}` }} />
-                          </div>
-                        )}
+                        <div className='auth__error-hint'>
+                          {isLastnameFieldHasError && !lastnameValue && (
+                            <span className='auth__error'>Поле не может быть пустым</span>
+                          )}
+                        </div>
                       </div>
                     </div>
 
