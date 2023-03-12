@@ -7,7 +7,7 @@ import { NavLink } from 'react-router-dom';
 import MaskedInput from 'react-text-mask';
 import classNames from 'classnames';
 
-import { userSignUp } from '../../api/api-auth';
+import { IUserSignUpData, userSignUp } from '../../api/api-auth';
 import { ReactComponent as Arrow } from '../../assets/icons/arrow.svg';
 import { ReactComponent as CheckMark } from '../../assets/icons/check-mark.svg';
 import { ReactComponent as EyeClose } from '../../assets/icons/eye-close.svg';
@@ -20,23 +20,23 @@ import { AuthInfo } from './auth-info';
 
 import './authorization.scss';
 
-type IRegistrationFormData = {
-  username: string;
-  password: string;
-  firstName: string;
-  lastName: string;
-  phone: string;
-  email: string;
-};
+// type IRegistrationFormData = {
+//   username: string;
+//   password: string;
+//   firstName: string;
+//   lastName: string;
+//   phone: string;
+//   email: string;
+// };
 
 const RegistrationPage = () => {
   const {
     register,
     handleSubmit,
     control,
-    formState: { errors, dirtyFields, isDirty },
+    formState: { errors, dirtyFields },
     reset,
-  } = useForm<IRegistrationFormData>();
+  } = useForm<IUserSignUpData>();
 
   const [step, setStep] = useState(1);
   const [isShown, setIsSHown] = useState(false);
@@ -44,11 +44,14 @@ const RegistrationPage = () => {
   const [passwordValue, setPasswordValue] = useState('');
   const [firstnameValue, setFirstnameValue] = useState('');
   const [lastnameValue, setLastnameValue] = useState('');
-  const [phoneErrorShow, setPhoneErrorShow] = useState(true);
+  const [phoneValue, setPhoneValue] = useState('');
+  const [emailValue, setEmailValue] = useState('');
   const [isUsernameFieldHasError, setUsernameFieldHasError] = useState(false);
   const [isFirstnameFieldHasError, setFirstnameFieldHasError] = useState(false);
   const [isLastnameFieldHasError, setLastnameFieldHasError] = useState(false);
   const [isPasswordFieldHasError, setPasswordFieldHasError] = useState(false);
+  const [isPhoneFieldHasError, setPhoneFieldHasError] = useState(false);
+  const [isEmailFieldHasError, setEmailFieldHasError] = useState(false);
   // const [isFieldNotValid, setFieldNotValid] = useState(!!errors.username?.message);
   const authState = useTypedSelector((state) => state.authReducer);
   const { letterIsSent } = authState;
@@ -64,18 +67,32 @@ const RegistrationPage = () => {
 
   // const matchesString = errors.username?.types?.matches?.toString().replace(',', ' ') || '';
 
-  const onSubmit = (data: IRegistrationFormData) => {
-    dispatch(userSignUp(data));
+  const phoneValidate = (phoneString: string) => {
+    if (phoneString) {
+      switch (true) {
+        case !phoneString.match(/^\+\d{3}\s\(\d{2}\)\s\d{3}-\d{2}-\d{2}$/g):
+          return '<span class="auth__error">В формате +375 (xx) xxx-xx-xx</span>';
+          break;
+        default:
+          return 'ok';
+      }
+    } else {
+      return '';
+    }
+  };
 
-    // if (!loading) {
-    //   navigate('/');
-    // }
-
-    // navigate('/');
-    reset();
-    setStep(0);
-    // console.log('data', data);
-    // console.log('testData', testData);
+  const emailValidate = (emailString: string) => {
+    if (emailString) {
+      switch (true) {
+        case !emailString.match(/^([a-z0-9_-]+\.)*[a-z0-9_-]+@[a-z0-9_-]+(\.[a-z0-9_-]+)*\.[a-z]{2,6}$/g):
+          return '<span class="auth__error">Введите корректный email</span>';
+          break;
+        default:
+          return 'ok';
+      }
+    } else {
+      return '';
+    }
   };
 
   const usernameValidate = (usernameString: string) => {
@@ -162,10 +179,39 @@ const RegistrationPage = () => {
     if (step === 2 && !dirtyFields.lastName) {
       setLastnameFieldHasError(true);
     }
-    if (step === 2 && usernameValue && passwordValue) {
+    if (step === 2 && firstnameValue && lastnameValue) {
       setStep(3);
       console.log(errors);
     }
+  };
+
+  const onSubmit = (data: IUserSignUpData) => {
+    // eslint-disable-next-line no-param-reassign
+    data = {
+      email: emailValue,
+      username: usernameValue,
+      password: passwordValue,
+      firstName: firstnameValue,
+      lastName: lastnameValue,
+      phone: phoneValue,
+    };
+    console.log('data', data);
+    // setPhoneFieldHasError(true);
+    // setEmailFieldHasError(true);
+    // phoneValidate(phoneValue);
+    // emailValidate(emailValue);
+
+    dispatch(userSignUp(data));
+
+    // if (!loading) {
+    //   navigate('/');
+    // }
+
+    // navigate('/');
+    reset();
+    setStep(0);
+    // console.log('data', data);
+    // console.log('testData', testData);
   };
 
   return (
@@ -349,6 +395,7 @@ const RegistrationPage = () => {
                                 '3',
                                 '7',
                                 '5',
+                                ' ',
                                 '(',
                                 /\d/,
                                 /\d/,
@@ -364,12 +411,24 @@ const RegistrationPage = () => {
                                 /\d/,
                                 /\d/,
                               ]}
-                              className='auth__input'
+                              className={classNames('auth__input', {
+                                isError: isPhoneFieldHasError && phoneValidate(phoneValue) !== 'ok',
+                              })}
                               guide={true}
                               type='text'
                               name='phone'
-                              onBlur={setPhoneErrorShow(false)}
-                              onChange={onChange}
+                              // onBlur={setPhoneErrorShow(false)}
+                              // onChange={onChange}
+                              onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                                onChange();
+                                setPhoneValue(e.currentTarget.value);
+                                setPhoneFieldHasError(false);
+                                console.log(e.currentTarget.value);
+                              }}
+                              onBlur={() => {
+                                setPhoneFieldHasError(true);
+                                phoneValidate(phoneValue);
+                              }}
                               keepCharPositions={true}
                               required={true}
                               // value={}
@@ -383,32 +442,45 @@ const RegistrationPage = () => {
                           {/* {dirtyFields.phone && !errors.phone && phoneErrorShow && (
                             <span className='auth__error'>Поле не пожет быть пустым</span>
                           )} */}
-                          {errors.phone && (
-                            <span
-                              data-test-id='hint'
-                              dangerouslySetInnerHTML={{ __html: `${errors.phone?.message}` }}
-                            />
+                          {!isPhoneFieldHasError &&
+                            !!phoneValidate(phoneValue) &&
+                            phoneValidate(phoneValue) !== 'ok' && (
+                              <span dangerouslySetInnerHTML={{ __html: phoneValidate(phoneValue) }} />
+                            )}
+                          {isPhoneFieldHasError && phoneValidate(phoneValue) !== 'ok' && (
+                            <span className='auth__error'>Поле не может быть пустым</span>
                           )}
                         </div>
                       </div>
                       <div className='auth__input-group'>
                         <input
                           type='text'
-                          className='auth__input'
-                          {...register('email', {
-                            required: true,
+                          className={classNames('auth__input', {
+                            isError: isEmailFieldHasError && emailValidate(emailValue) !== 'ok',
                           })}
+                          {...register('email')}
                           required={true}
+                          onChange={(e) => {
+                            setEmailValue(e.currentTarget.value);
+                            setEmailFieldHasError(false);
+                          }}
+                          onBlur={() => {
+                            setEmailFieldHasError(true);
+                            emailValidate(emailValue);
+                            console.log('errors', errors);
+                          }}
                         />
                         <label htmlFor='email' className='auth__label'>
                           E-mail
                         </label>
                         <div className='auth__error-hint'>
-                          {errors.email && (
-                            <span
-                              data-test-id='hint'
-                              dangerouslySetInnerHTML={{ __html: `${errors.email?.message}` }}
-                            />
+                          {!isEmailFieldHasError &&
+                            !!emailValidate(emailValue) &&
+                            emailValidate(emailValue) !== 'ok' && (
+                              <span dangerouslySetInnerHTML={{ __html: emailValidate(emailValue) }} />
+                            )}
+                          {isEmailFieldHasError && emailValidate(emailValue) !== 'ok' && (
+                            <span className='auth__error'>Поле не может быть пустым</span>
                           )}
                         </div>
                       </div>
