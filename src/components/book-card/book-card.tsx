@@ -4,7 +4,7 @@ import { NavLink, useOutletContext, useParams } from 'react-router-dom';
 import { ReactComponent as OtherCover } from '../../assets/icons/other_cover.svg';
 import { IBookCard } from '../../types';
 import { HOST } from '../../utils/constants';
-import { deliveryDate } from '../../utils/functions';
+import { deliveryDate, highlight } from '../../utils/functions';
 import { IOutletContext } from '../layout-main-page/layout-main-page';
 import { Rating } from '../rating/rating';
 
@@ -12,15 +12,6 @@ import './book-card.scss';
 
 type BookCardProps = {
   book: IBookCard;
-};
-
-const highlight = (searchText: string, title: string) => {
-  const regex = new RegExp(searchText, 'gi');
-
-  const newText = title.replace(regex, `<span data-test-id='highlight-matches' class="highlight">$&</span>`);
-
-  // eslint-disable-next-line react/no-danger
-  return <span dangerouslySetInnerHTML={{ __html: newText }} />;
 };
 
 export const BookCard = ({ book }: BookCardProps) => {
@@ -53,7 +44,7 @@ export const BookCard = ({ book }: BookCardProps) => {
 
           <div className='book__name'>
             <div className='book__title'>
-              <p>{highlight(searchQuery, book.title)}</p>{' '}
+              <p>{highlight([searchQuery], book.title)}</p>{' '}
             </div>
             <div className='book__author'>
               {book.authors.map((author) => author)}, {book.issueYear}

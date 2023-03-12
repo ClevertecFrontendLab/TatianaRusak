@@ -24,4 +24,20 @@ const getWindowWidth = () => {
   return innerWidth;
 };
 
-export { deliveryDate, getWindowWidth, toFormattedDate };
+const highlight = (searchMatches: string[], title: string) => {
+  let newText;
+
+  searchMatches.forEach((match) => {
+    const regex = new RegExp(match, 'gi');
+
+    newText = title.replace(regex, `<span data-test-id='highlight-matches' class="highlight">$&</span>`);
+
+    // eslint-disable-next-line react/react-in-jsx-scope, react/no-danger
+    return <span dangerouslySetInnerHTML={{ __html: newText }} />;
+  });
+
+  // eslint-disable-next-line react/react-in-jsx-scope, react/no-danger
+  return newText;
+};
+
+export { deliveryDate, getWindowWidth, toFormattedDate, highlight };

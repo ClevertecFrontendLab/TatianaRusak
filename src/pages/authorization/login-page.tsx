@@ -7,6 +7,7 @@ import classNames from 'classnames';
 
 import { userLogIn } from '../../api/api-auth';
 import { ReactComponent as Arrow } from '../../assets/icons/arrow.svg';
+import { ReactComponent as CheckMark } from '../../assets/icons/check-mark.svg';
 import { ReactComponent as EyeClose } from '../../assets/icons/eye-close.svg';
 import { ReactComponent as EyeOpen } from '../../assets/icons/eye-open.svg';
 import { Loader } from '../../components/loader/loader';
@@ -22,8 +23,7 @@ const LoginPage = () => {
   const {
     register,
     handleSubmit,
-    reset,
-    formState: { errors, isDirty },
+    formState: { errors },
   } = useForm<ILogInFormData>({
     resolver: yupResolver(schemaLogIn),
     mode: 'all',
@@ -40,17 +40,7 @@ const LoginPage = () => {
   const { error400 } = authState;
 
   const onSubmit = (data: ILogInFormData) => {
-    console.log('errors', errors);
-    console.log('data', data);
-    console.log('dfkjasdkfjaskfdjksfd;lkjs;dkfja;lskdjfalksdjflkasjdf;');
-
     dispatch(userLogIn(data));
-
-    // if (token) {
-    //   return redirect('/');
-    // }
-    // // navigate('/');
-    // reset();
   };
 
   return (
@@ -61,14 +51,14 @@ const LoginPage = () => {
         </div>
       )}
       <div className='auth__wrapper'>
-        <div className='auth__inner'>
+        <div className='auth__inner' data-test-id='auth'>
           <div className='auth__inner-box'>
             {!errorAny && (
               <div className='auth__form'>
                 <div className='auth__title-block'>
                   <h1 className='auth__title'>Вход в личный кабинет</h1>
                 </div>
-                <form onSubmit={handleSubmit(onSubmit)}>
+                <form onSubmit={handleSubmit(onSubmit)} data-test-id='auth-form'>
                   <div className='auth__inputs-set'>
                     <div className='auth__input-group'>
                       <input
@@ -81,7 +71,6 @@ const LoginPage = () => {
                         Логин
                       </label>
                       <div className='auth__error-hint'>
-                        {/* {isDirty && !errors.identifier?.message && 'Поле не может быть пустым'} */}
                         {errors.identifier && (
                           <span dangerouslySetInnerHTML={{ __html: `${errors.identifier?.message}` }} />
                         )}
@@ -100,12 +89,12 @@ const LoginPage = () => {
                         Пароль
                       </label>
                       <div className='auth__password-eye' onClick={() => setIsSHown(!isShown)} role='presentation'>
-                        {!!passwordValue && isShown && <EyeOpen />}
-                        {!!passwordValue && !isShown && <EyeClose />}
+                        {/* {!!passwordValue && !errors.password && <CheckMark data-test-id='checkmark' />} */}
+                        {!!passwordValue && isShown && <EyeOpen data-test-id='eye-opened' />}
+                        {!!passwordValue && !isShown && <EyeClose data-test-id='eye-closed' />}
                       </div>
                       <div className='auth__error-hint'>
-                        {/* {isDirty && !errors.password?.message && 'Поле не может быть пустым'} */}
-                        {errors.password && (
+                        {errors.password && !passwordValue && (
                           <span dangerouslySetInnerHTML={{ __html: `${errors.password?.message}` }} />
                         )}
                       </div>
@@ -120,7 +109,9 @@ const LoginPage = () => {
 
                   {error400 && (
                     <div className='auth__error-block'>
-                      <span className='auth__error'>Неверный логин или пароль!</span>
+                      <span className='auth__error' data-test-id='hint'>
+                        Неверный логин или пароль!
+                      </span>
                       <NavLink to='/forgot-pass'>Восстановить?</NavLink>
                     </div>
                   )}
@@ -139,10 +130,10 @@ const LoginPage = () => {
                 </div>
               </div>
             )}
+            {errorAny && (
+              <AuthInfo title='Вход не выполнен' text='Что-то пошло не так. Попробуйте ещё раз' direction='повторить' />
+            )}
           </div>
-          {errorAny && (
-            <AuthInfo title='Вход не выполнен' text='Что-то пошло не так. Попробуйте ещё раз' direction='повторить' />
-          )}
         </div>
       </div>
 

@@ -58,10 +58,10 @@ export interface IChangePasswordData {
   code: string;
 }
 
-export const userSignUp = createAsyncThunk<ISignUpResponse, IUserSignUpData, { rejectValue: ISignUpError }>(
+export const userSignUp = createAsyncThunk<ISignUpResponse, IUserSignUpData, { rejectValue: AxiosError }>(
   'authentication/sighUp',
 
-  async (userData) => {
+  async (userData, { rejectWithValue }) => {
     try {
       const response = await axios.post(`${HOST}/api/auth/local/register`, userData);
 
@@ -69,18 +69,15 @@ export const userSignUp = createAsyncThunk<ISignUpResponse, IUserSignUpData, { r
         throw new Error(response.data.error);
       }
 
-      localStorage.setItem('token', response.data.jwt);
-      localStorage.setItem('user', JSON.stringify(response.data.user));
-
       return response.data;
     } catch (error) {
-      return (error as ISignUpError).error.message;
+      return rejectWithValue(error as AxiosError);
     }
   }
 );
 
 export const userLogIn = createAsyncThunk<ISignUpResponse, IUserLogInData, { rejectValue: AxiosError }>(
-  'authentication/logIn',
+  'authentication/login',
 
   async (userData, { rejectWithValue }) => {
     try {
@@ -96,16 +93,20 @@ export const userLogIn = createAsyncThunk<ISignUpResponse, IUserLogInData, { rej
   }
 );
 
-export const sendLinkIfForgotPassword = createAsyncThunk<IForgotPasswordResponse, IForgotPasswordData>(
+export const sendLinkIfForgotPassword = createAsyncThunk<
+  IForgotPasswordResponse,
+  IForgotPasswordData,
+  { rejectValue: AxiosError }
+>(
   'authentication/forgotPassword',
 
-  async (userEmail) => {
+  async (userEmail, { rejectWithValue }) => {
     try {
       const response = await axios.post(`${HOST}/api/auth/forgot-password`, userEmail);
 
       return response.data;
     } catch (error) {
-      return error as AxiosError;
+      return rejectWithValue(error as AxiosError);
     }
   }
 );
@@ -113,7 +114,7 @@ export const sendLinkIfForgotPassword = createAsyncThunk<IForgotPasswordResponse
 export const changePassword = createAsyncThunk<ISignUpResponse, IChangePasswordData, { rejectValue: AxiosError }>(
   'authentication/changePassword',
 
-  async (newPasswordData) => {
+  async (newPasswordData, { rejectWithValue }) => {
     console.log('замена произошла');
 
     try {
@@ -121,7 +122,7 @@ export const changePassword = createAsyncThunk<ISignUpResponse, IChangePasswordD
 
       return response.data;
     } catch (error) {
-      return error as AxiosError;
+      return rejectWithValue(error as AxiosError);
     }
   }
 );

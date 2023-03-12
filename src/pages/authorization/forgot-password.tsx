@@ -32,7 +32,7 @@ const ForgotPassword = () => {
   return (
     <Fragment>
       <div className='auth__back-to-login'>
-        <NavLink to='/login' className='auth__registration-link'>
+        <NavLink to='/auth' className='auth__registration-link'>
           <Arrow />
           вход в личный кабинет
         </NavLink>
@@ -42,7 +42,7 @@ const ForgotPassword = () => {
           <div className='auth__title-block'>
             <h1 className='auth__title'>Восстановление пароля</h1>
           </div>
-          <form onSubmit={handleSubmit(onSubmit)}>
+          <form onSubmit={handleSubmit(onSubmit)} data-test-id='send-email-form'>
             <div className='auth__inputs-set'>
               <div className='auth__input-group'>
                 <input
@@ -58,7 +58,7 @@ const ForgotPassword = () => {
                 </label>
                 <div className='auth__error-hint'>
                   {errors.email && <span dangerouslySetInnerHTML={{ __html: `${errors.email?.message}` }} />}
-                  {errorAny && <span dangerouslySetInnerHTML={{ __html: `${errors.email?.message}` }} />}
+                  {errorAny && <span className='auth__error'>error</span>}
                   <p>Ha это email будет отправлено письмо c инструкциями по восстановлению пароля</p>
                 </div>
               </div>

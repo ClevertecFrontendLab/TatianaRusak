@@ -5,10 +5,10 @@ interface Props {
   children: JSX.Element;
 }
 
-const RequireAuth = ({ children }: Props) => {
+const RequireNotAuth = ({ children }: Props) => {
   const token = localStorage.getItem('token');
 
-  return token ? children : <Navigate to='/auth' />;
+  return token ? <Navigate to='/' /> : children;
 };
 
-export { RequireAuth };
+export { RequireNotAuth };

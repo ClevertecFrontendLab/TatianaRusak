@@ -149,7 +149,7 @@ export const Menu = () => {
           </NavLink>
         </li>
         <li className='menu-user__item menu__item'>
-          <NavLink to='/login' className='menu__link' onClick={logOutHandle}>
+          <NavLink to='/auth' className='menu__link' onClick={logOutHandle} data-test-id='exit-button'>
             <h5>Выход</h5>
           </NavLink>
         </li>

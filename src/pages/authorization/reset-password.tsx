@@ -25,6 +25,7 @@ const ResetPassword = () => {
   const [passwordValue, setPasswordValue] = useState('');
   const [passwordConfirmValue, setPasswordConfirmValue] = useState('');
   const [isPasswordShown, setPasswordShown] = useState(false);
+  const [isPasswordInputDirty, setPasswordInputDirty] = useState(false);
   const [isPasswordConfirmShown, setPasswordConfirmShown] = useState(false);
   const dispatch = useAppDispatch();
 
@@ -46,7 +47,7 @@ const ResetPassword = () => {
         <div className='auth__title-block'>
           <h1 className='auth__title'>Восстановление</h1>
         </div>
-        <form onSubmit={handleSubmit(onSubmit)}>
+        <form onSubmit={handleSubmit(onSubmit)} data-test-id='reset-password-form'>
           <div className='auth__inputs-set'>
             <div className='auth__input-group'>
               <input
@@ -54,8 +55,12 @@ const ResetPassword = () => {
                 className='auth__input'
                 {...register('password')}
                 value={passwordValue}
-                onChange={(e) => setPasswordValue(e.currentTarget.value)}
+                onChange={(e) => {
+                  console.log('errors', errors);
+                  setPasswordValue(e.currentTarget.value);
+                }}
                 required={true}
+                onBlur={() => setPasswordInputDirty(true)}
               />
               <label htmlFor='password' className='auth__label'>
                 Пароль
@@ -65,13 +70,19 @@ const ResetPassword = () => {
                 onClick={() => setPasswordShown(!isPasswordShown)}
                 role='presentation'
               >
-                {!!passwordValue && !errors.password && <CheckMark />}
-                {!!passwordValue && isPasswordShown && <EyeOpen />}
-                {!!passwordValue && !isPasswordShown && <EyeClose />}
+                {!!passwordValue && !errors.password && <CheckMark data-test-id='checkmark' />}
+                {!!passwordValue && isPasswordShown && <EyeOpen data-test-id='eye-opened' />}
+                {!!passwordValue && !isPasswordShown && <EyeClose data-test-id='eye-closed' />}
               </div>
+
               <div className='auth__error-hint'>
                 {isDirty && !errors.password?.message && 'Пароль не менее 8 символов, с заглавной буквой и цифрой'}
                 {errors.password && <span dangerouslySetInnerHTML={{ __html: `${errors.password?.message}` }} />}
+                {isPasswordInputDirty && !passwordValue && (
+                  <span className='auth__error' data-test-id='hint'>
+                    Поле не может быть пустым
+                  </span>
+                )}
               </div>
             </div>
             <div className='auth__input-group'>
@@ -91,12 +102,15 @@ const ResetPassword = () => {
                 onClick={() => setPasswordConfirmShown(!isPasswordConfirmShown)}
                 role='presentation'
               >
-                {!!passwordConfirmValue && isPasswordConfirmShown && <EyeOpen />}
-                {!!passwordConfirmValue && !isPasswordConfirmShown && <EyeClose />}
+                {!!passwordConfirmValue && isPasswordConfirmShown && <EyeOpen data-test-id='eye-opened' />}
+                {!!passwordConfirmValue && !isPasswordConfirmShown && <EyeClose data-test-id='eye-closed' />}
               </div>
               <div className='auth__error-hint'>
                 {errors.passwordConfirmation && (
-                  <span dangerouslySetInnerHTML={{ __html: `${errors.passwordConfirmation?.message}` }} />
+                  <span
+                    data-test-id='hint'
+                    dangerouslySetInnerHTML={{ __html: `${errors.passwordConfirmation?.message}` }}
+                  />
                 )}
               </div>
             </div>
@@ -107,7 +121,9 @@ const ResetPassword = () => {
           </button>
         </form>
 
-        <div className='auth__error-hint'>После сохранения войдите в библиотеку, используя новый пароль</div>
+        <div className='auth__error-hint' data-test-id='hint'>
+          После сохранения войдите в библиотеку, используя новый пароль
+        </div>
       </div>
     </div>
   );

@@ -4,8 +4,8 @@ export const schemaForgotPassword = yup
   .object({
     email: yup
       .string()
-      .required('<span class="auth__error">Введите корректный e-mail<span>')
-      .email('<span class="auth__error">Введите корректный e-mail<span>'),
+      .required('<span class="auth__error" data-test-id="hint">Поле не может быть пустым<span>')
+      .email('<span class="auth__error" data-test-id="hint">Введите корректный e-mail<span>'),
   })
   .required();
 

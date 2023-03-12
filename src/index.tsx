@@ -6,8 +6,8 @@ import { HashRouter, Navigate, Route, Routes } from 'react-router-dom';
 import { Layout } from './components/layout/layout';
 import { LayoutMainPage } from './components/layout-main-page/layout-main-page';
 import { RequireAuth } from './hoc/require-auth';
-import { ForgotPasswordPage } from './pages/authorization/password-page';
 import { LoginPage } from './pages/authorization/login-page';
+import { ForgotPasswordPage } from './pages/authorization/password-page';
 import { RegistrationPage } from './pages/authorization/registration-page';
 import { BookPage } from './pages/book';
 import { MainPage } from './pages/main';
@@ -15,6 +15,7 @@ import { RulesPage } from './pages/rules/rules-page';
 import { store } from './store/store';
 
 import './index.scss';
+import { RequireNotAuth } from './hoc/require-not-auth';
 
 const root = ReactDOM.createRoot(document.getElementById('root') as HTMLElement);
 
@@ -23,9 +24,31 @@ root.render(
     <Provider store={store}>
       <HashRouter>
         <Routes>
-          <Route path='/login' element={<LoginPage />} />
-          <Route path='/registration' element={<RegistrationPage />} />
-          <Route path='/forgot-pass' element={<ForgotPasswordPage />} />
+          {/* <Route path='/auth' element={<LoginPage />} /> */}
+          <Route
+            path='/auth'
+            element={
+              <RequireNotAuth>
+                <LoginPage />
+              </RequireNotAuth>
+            }
+          />
+          <Route
+            path='/registration'
+            element={
+              <RequireNotAuth>
+                <RegistrationPage />
+              </RequireNotAuth>
+            }
+          />
+          <Route
+            path='/forgot-pass'
+            element={
+              <RequireNotAuth>
+                <ForgotPasswordPage />
+              </RequireNotAuth>
+            }
+          />
           <Route
             path='/'
             element={

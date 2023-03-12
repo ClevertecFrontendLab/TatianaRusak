@@ -12,9 +12,11 @@ import { ResetPassword } from './reset-password';
 const ForgotPasswordPage = () => {
   const authState = useTypedSelector((state) => state.authReducer);
   const { loading } = authState;
-  const { resetLetterIsSent } = authState;
+  const { letterIsSent } = authState;
   const { errorAny } = authState;
   const { error400 } = authState;
+  const { errorMessage } = authState;
+  const { passwordIsChanged } = authState;
   const location = useLocation();
   const code = location.search.substring(6);
 
@@ -26,24 +28,24 @@ const ForgotPasswordPage = () => {
         </div>
       )}
       <div className='auth__wrapper'>
-        <div className='auth__inner'>
-          {!resetLetterIsSent && !code && <ForgotPassword />}
-          {code && <ResetPassword />}
-          {!code && resetLetterIsSent && (
+        <div className='auth__inner' data-test-id='auth'>
+          {!letterIsSent && !code && <ForgotPassword />}
+          {code && !errorAny && <ResetPassword />}
+          {!code && letterIsSent && !errorMessage && (
             <AuthInfo
               title='Письмо выслано'
               text='Перейдите в вашу почту, чтобы воспользоваться подсказками по восстановлению пароля'
               direction=''
             />
           )}
-          {errorAny && error400 && (
+          {errorAny && (
             <AuthInfo
               title='Данные не сохранились'
               text='Что-то пошло не так. Попробуйте ещё раз'
               direction='refresh'
             />
           )}
-          {!errorAny && resetLetterIsSent && (
+          {!errorAny && passwordIsChanged && (
             <AuthInfo
               title='Новые данные сохранены'
               text='Зайдите в личный кабинет, используя свои логин и новый пароль'

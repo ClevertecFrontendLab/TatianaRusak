@@ -14,7 +14,7 @@ const getInitalState: () => IAuthState = () => {
     token: '',
     errorAny: false,
     error400: false,
-    resetLetterIsSent: false,
+    letterIsSent: false,
     passwordIsChanged: false,
     errorMessage: '',
   };
@@ -50,17 +50,24 @@ export const authSlice = createSlice({
     builder
       .addCase(userSignUp.pending, (state) => {
         state.loading = true;
+        state.letterIsSent = false;
       })
       .addCase(userSignUp.fulfilled, (state, action) => {
         state.loading = false;
-        // state.isLoggedIn = true;
+        state.letterIsSent = true;
         state.token = action.payload.jwt;
         state.user = action.payload;
       })
       .addCase(userSignUp.rejected, (state, action) => {
         state.loading = false;
+        state.letterIsSent = false;
         state.token = '';
         state.user = null;
+        if (action.payload?.response?.status === 400) {
+          state.error400 = true;
+        } else {
+          state.errorAny = true;
+        }
       })
       .addCase(userLogIn.pending, (state, action) => {
         state.loading = true;
@@ -90,14 +97,18 @@ export const authSlice = createSlice({
         state.loading = false;
         state.error400 = false;
         state.errorAny = false;
-        state.resetLetterIsSent = true;
+        state.letterIsSent = true;
         state.errorMessage = '';
       })
       .addCase(sendLinkIfForgotPassword.rejected, (state, action) => {
         state.loading = false;
-        state.errorAny = true;
-        state.resetLetterIsSent = false;
+        state.letterIsSent = false;
         state.errorMessage = action.error?.message;
+        if (action.payload?.response?.status === 400) {
+          state.error400 = true;
+        } else {
+          state.errorAny = true;
+        }
       })
       .addCase(changePassword.pending, (state, action) => {
         state.loading = true;

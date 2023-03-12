@@ -5,41 +5,49 @@ import React, { Fragment, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { NavLink } from 'react-router-dom';
 import MaskedInput from 'react-text-mask';
-import { yupResolver } from '@hookform/resolvers/yup';
 import classNames from 'classnames';
 
 import { userSignUp } from '../../api/api-auth';
 import { ReactComponent as Arrow } from '../../assets/icons/arrow.svg';
+import { ReactComponent as CheckMark } from '../../assets/icons/check-mark.svg';
 import { ReactComponent as EyeClose } from '../../assets/icons/eye-close.svg';
 import { ReactComponent as EyeOpen } from '../../assets/icons/eye-open.svg';
 import { Loader } from '../../components/loader/loader';
 import { useTypedSelector } from '../../hooks/use-typed-selector';
 import { useAppDispatch } from '../../store/store';
-import { IRegistrationFormData, schemaRegistration } from '../../validations/registration';
 
 import { AuthInfo } from './auth-info';
 
 import './authorization.scss';
+
+type IRegistrationFormData = {
+  username: string;
+  password: string;
+  firstName: string;
+  lastName: string;
+  phone: string;
+  email: string;
+};
 
 const RegistrationPage = () => {
   const {
     register,
     handleSubmit,
     control,
-    formState: { errors, isDirty },
+    formState: { errors, dirtyFields, isDirty },
     reset,
-    // watch,
-  } = useForm<IRegistrationFormData>({
-    resolver: yupResolver(schemaRegistration),
-    mode: 'all',
-    criteriaMode: 'all',
-  });
+  } = useForm<IRegistrationFormData>();
 
   const [step, setStep] = useState(1);
   const [isShown, setIsSHown] = useState(false);
+  const [usernameValue, setUsernameValue] = useState('');
   const [passwordValue, setPasswordValue] = useState('');
+  const [phoneErrorShow, setPhoneErrorShow] = useState(true);
+  const [isUsernameFieldHasError, setUsernameFieldHasError] = useState(false);
+  const [isPasswordFieldHasError, setPasswordFieldHasError] = useState(false);
+  // const [isFieldNotValid, setFieldNotValid] = useState(!!errors.username?.message);
   const authState = useTypedSelector((state) => state.authReducer);
-  const { user } = authState;
+  const { letterIsSent } = authState;
   const { loading } = authState;
   const { error400 } = authState;
   const { errorAny } = authState;
@@ -47,6 +55,10 @@ const RegistrationPage = () => {
   // const token = localStorage.getItem('token');
 
   const dispatch = useAppDispatch();
+  // const matches = errors.username?.types?.matches?.toString();
+  // const matchesArray = errors.username?.types?.matches?.toString().split(',') || [];
+
+  // const matchesString = errors.username?.types?.matches?.toString().replace(',', ' ') || '';
 
   const onSubmit = (data: IRegistrationFormData) => {
     dispatch(userSignUp(data));
@@ -57,14 +69,85 @@ const RegistrationPage = () => {
 
     // navigate('/');
     reset();
-
-    console.log('submit');
+    setStep(0);
     // console.log('data', data);
     // console.log('testData', testData);
   };
 
+  const usernameValidate = (usernameString: string) => {
+    if (usernameString) {
+      switch (true) {
+        case !!usernameString.match(/[а-яА-Я]/g) && !usernameString.match(/[0-9]/g):
+          return 'Используйте для логина <span class="auth__error">латинский алфавит</span> и <span class="auth__error">цифры</span>';
+          break;
+        case !!usernameString.match(/[а-яА-Я]/g):
+          return 'Используйте для логина <span class="auth__error">латинский алфавит</span> и цифры';
+          break;
+        case !usernameString.match(/[0-9]/g):
+          return 'Используйте для логина латинский алфавит и <span class="auth__error">цифры</span>';
+          break;
+        case !usernameString.match(/[A-Za-z]/g):
+          return 'Используйте для логина <span class="auth__error">латинский алфавит</span> и цифры';
+          break;
+        default:
+          return 'ok';
+      }
+    }
+
+    return '';
+  };
+
+  const passwordValidate = (passwordString: string) => {
+    if (passwordString) {
+      switch (true) {
+        case passwordString.length < 8 && !passwordString.match(/[А-ЯA-Z]/g) && !passwordString.match(/[0-9]/g):
+          return 'Пароль <span class="auth__error">не менее 8 символов</span>, с <span class="auth__error">заглавной буквой</span> и <span class="auth__error">цифрой</span>';
+          break;
+        case passwordString.length < 8 && !!passwordString.match(/[А-ЯA-Z]/g) && !!passwordString.match(/[0-9]/g):
+          return 'Пароль <span class="auth__error">не менее 8 символов</span>, с заглавной буквой и цифрой';
+          break;
+        case passwordString.length >= 8 && !passwordString.match(/[А-ЯA-Z]/g) && !passwordString.match(/[0-9]/g):
+          return 'Пароль не менее 8 символов, с <span class="auth__error">заглавной буквой</span> и <span class="auth__error">цифрой</span>';
+          break;
+        case passwordString.length >= 8 && !!passwordString.match(/[А-ЯA-Z]/g) && !passwordString.match(/[0-9]/g):
+          return 'Пароль не менее 8 символов, с заглавной буквой и <span class="auth__error">цифрой</span>';
+          break;
+        case passwordString.length >= 8 && !passwordString.match(/[А-ЯA-Z]/g) && !!passwordString.match(/[0-9]/g):
+          return 'Пароль не менее 8 символов, <span class="auth__error">с заглавной буквой</span> и цифрой';
+          break;
+        case passwordString.length < 8 && !!passwordString.match(/[А-ЯA-Z]/g) && !passwordString.match(/[0-9]/g):
+          return 'Пароль <span class="auth__error">не менее 8 символов</span>, с заглавной буквой и <span class="auth__error">цифрой</span>';
+          break;
+        case passwordString.length < 8 && !passwordString.match(/[А-ЯA-Z]/g) && !!passwordString.match(/[0-9]/g):
+          return 'Пароль <span class="auth__error">не менее 8 символов</span>, <span class="auth__error">с заглавной буквой</span> и цифрой';
+          break;
+        default:
+          return 'ok';
+      }
+    }
+
+    return '';
+  };
+
   const preValidate = () => {
-    if (step === 1 && isDirty && !errors.username && !errors.password) {
+    console.log(errors);
+    console.log(dirtyFields);
+    console.log(isUsernameFieldHasError);
+    console.log('usernameValidate(usernameValue)', usernameValidate(usernameValue));
+
+    if (errors.username?.message || (step === 1 && !dirtyFields.username)) {
+      setUsernameFieldHasError(true);
+    }
+    if (step === 1 && !dirtyFields.password) {
+      setPasswordFieldHasError(true);
+    }
+    if (
+      step === 1 &&
+      usernameValue &&
+      passwordValue &&
+      passwordValidate(passwordValue) === 'ok' &&
+      usernameValidate(usernameValue) === 'ok'
+    ) {
       setStep(2);
       console.log(errors);
     }
@@ -82,57 +165,89 @@ const RegistrationPage = () => {
         </div>
       )}
 
-      {!loading && !user && (
-        <div className='auth__wrapper'>
-          <div className='auth__inner'>
+      <div className='auth__wrapper'>
+        <div className='auth__inner' data-test-id='auth'>
+          {!loading && !letterIsSent && !error400 && !errorAny && (
             <div className='auth__inner-box'>
               <div className='auth__title-block'>
                 <h1 className='auth__title'>Регистрация</h1>
                 <div className='auth__step'>{step} шаг из 3</div>
               </div>
-              <form onSubmit={handleSubmit(onSubmit)}>
+              <form onSubmit={handleSubmit(onSubmit)} data-test-id='register-form'>
                 {step === 1 && (
                   <div className='auth__step-1'>
                     <div className='auth__inputs-set'>
                       <div className='auth__input-group'>
                         <input
                           type='text'
-                          className={classNames('auth__input', { isError: !!errors.username?.message })}
-                          {...register('username')}
+                          className={classNames('auth__input', {
+                            isError: isUsernameFieldHasError && usernameValidate(usernameValue) !== 'ok',
+                          })}
+                          {...register('username', {
+                            required: 'Поле не может быть пустым',
+                          })}
                           required={true}
+                          onChange={(e) => {
+                            setUsernameValue(e.currentTarget.value);
+                            setUsernameFieldHasError(false);
+                          }}
+                          onBlur={() => {
+                            setUsernameFieldHasError(true);
+                            usernameValidate(usernameValue);
+                          }}
                         />
                         <label htmlFor='username' className='auth__label'>
                           Придумайте логин для входа
                         </label>
                         <div className='auth__error-hint'>
-                          {isDirty && !errors.username?.message && 'Используйте для логина латинский алфавит и цифры'}
-                          {errors.username && (
-                            <span dangerouslySetInnerHTML={{ __html: `${errors.username?.message}` }} />
+                          {!isUsernameFieldHasError &&
+                            !errors.username &&
+                            usernameValidate(usernameValue) &&
+                            usernameValidate(usernameValue) !== 'ok' && (
+                              <span dangerouslySetInnerHTML={{ __html: usernameValidate(usernameValue) }} />
+                            )}
+                          {isUsernameFieldHasError && usernameValidate(usernameValue) !== 'ok' && (
+                            <span className='auth__error'>Используйте для логина латинский алфавит и цифры</span>
                           )}
                         </div>
                       </div>
                       <div className='auth__input-group'>
                         <input
                           type={isShown ? 'text' : 'password'}
-                          className='auth__input'
+                          className={classNames('auth__input', {
+                            isError: isPasswordFieldHasError && !dirtyFields.password,
+                          })}
                           {...register('password')}
                           value={passwordValue}
-                          onChange={(e) => setPasswordValue(e.currentTarget.value)}
+                          onChange={(e) => {
+                            setPasswordValue(e.currentTarget.value);
+                            setPasswordFieldHasError(false);
+                          }}
+                          onBlur={() => {
+                            setPasswordFieldHasError(true);
+                            passwordValidate(passwordValue);
+                          }}
                           required={true}
                         />
                         <label htmlFor='password' className='auth__label'>
                           Пароль
                         </label>
                         <div className='auth__password-eye' onClick={() => setIsSHown(!isShown)} role='presentation'>
-                          {!!passwordValue && isShown && <EyeOpen />}
-                          {!!passwordValue && !isShown && <EyeClose />}
+                          {!!passwordValue && !errors.password && !passwordValidate(passwordValue) && (
+                            <CheckMark data-test-id='checkmark' />
+                          )}
+                          {!!passwordValue && isShown && <EyeOpen data-test-id='eye-opened' />}
+                          {!!passwordValue && !isShown && <EyeClose data-test-id='eye-closed' />}
                         </div>
                         <div className='auth__error-hint'>
-                          {isDirty &&
-                            !errors.password?.message &&
-                            'Пароль не менее 8 символов, с заглавной буквой и цифрой'}
-                          {errors.password && (
-                            <span dangerouslySetInnerHTML={{ __html: `${errors.password?.message}` }} />
+                          {!isPasswordFieldHasError &&
+                            !errors.password &&
+                            passwordValidate(passwordValue) &&
+                            passwordValidate(passwordValue) !== 'ok' && (
+                              <span dangerouslySetInnerHTML={{ __html: passwordValidate(passwordValue) }} />
+                            )}
+                          {isPasswordFieldHasError && passwordValidate(passwordValue) !== 'ok' && (
+                            <span className='auth__error'>Пароль не менее 8 символов, с заглавной буквой и цифрой</span>
                           )}
                         </div>
                       </div>
@@ -156,11 +271,11 @@ const RegistrationPage = () => {
                         <label htmlFor='firstName' className='auth__label'>
                           Имя
                         </label>
-                        <div className='auth__error-hint'>
-                          {errors.firstName && (
+                        {errors.firstName && (
+                          <div className='auth__error-hint'>
                             <span dangerouslySetInnerHTML={{ __html: `${errors.firstName?.message}` }} />
-                          )}
-                        </div>
+                          </div>
+                        )}
                       </div>
                       <div className='auth__input-group'>
                         <input
@@ -172,16 +287,25 @@ const RegistrationPage = () => {
                         <label htmlFor='lastName' className='auth__label'>
                           Фамилия
                         </label>
-                        <div className='auth__error-hint'>
-                          {errors.lastName && (
+                        {/* {isDirty && !errors.username?.message && (
+                          <span className='auth__error-hint'>Используйте для логина латинский алфавит и цифры</span>
+                        )} */}
+                        {errors.lastName && (
+                          <div className='auth__error-hint'>
                             <span dangerouslySetInnerHTML={{ __html: `${errors.lastName?.message}` }} />
-                          )}
-                        </div>
+                          </div>
+                        )}
                       </div>
                     </div>
 
-                    <button type='button' onClick={preValidate} className='auth__btn'>
-                      следующий шаг
+                    <button
+                      type='button'
+                      onClick={preValidate}
+                      className='auth__btn'
+                      // disabled={!errors.firstName || !errors.lastName}
+                      // disabled={true}
+                    >
+                      последний шаг
                     </button>
                   </div>
                 )}
@@ -217,9 +341,12 @@ const RegistrationPage = () => {
                               className='auth__input'
                               guide={true}
                               type='text'
+                              name='phone'
+                              onBlur={setPhoneErrorShow(false)}
                               onChange={onChange}
                               keepCharPositions={true}
                               required={true}
+                              // value={}
                             />
                           )}
                         />
@@ -227,7 +354,15 @@ const RegistrationPage = () => {
                           Номер телефона
                         </label>
                         <div className='auth__error-hint'>
-                          {errors.phone && <span dangerouslySetInnerHTML={{ __html: `${errors.phone?.message}` }} />}
+                          {/* {dirtyFields.phone && !errors.phone && phoneErrorShow && (
+                            <span className='auth__error'>Поле не пожет быть пустым</span>
+                          )} */}
+                          {errors.phone && (
+                            <span
+                              data-test-id='hint'
+                              dangerouslySetInnerHTML={{ __html: `${errors.phone?.message}` }}
+                            />
+                          )}
                         </div>
                       </div>
                       <div className='auth__input-group'>
@@ -243,9 +378,12 @@ const RegistrationPage = () => {
                           E-mail
                         </label>
                         <div className='auth__error-hint'>
-                          <div className='auth__error-hint'>
-                            {errors.email && <span dangerouslySetInnerHTML={{ __html: `${errors.email?.message}` }} />}
-                          </div>{' '}
+                          {errors.email && (
+                            <span
+                              data-test-id='hint'
+                              dangerouslySetInnerHTML={{ __html: `${errors.email?.message}` }}
+                            />
+                          )}
                         </div>
                       </div>
                     </div>
@@ -259,37 +397,36 @@ const RegistrationPage = () => {
 
               <div className='auth__registration-question'>
                 Есть учётная запись?{' '}
-                <NavLink to='/login' className='auth__registration-link'>
+                <NavLink to='/auth' className='auth__registration-link'>
                   войти
                   <Arrow />
                 </NavLink>
               </div>
             </div>
-          </div>
+          )}
+          {letterIsSent && (
+            <AuthInfo
+              title='Регистрация успешна'
+              text='Регистрация прошла успешно. Зайдите в личный кабинет, используя свои логин и пароль'
+              direction='login'
+            />
+          )}
+          {error400 && (
+            <AuthInfo
+              title='Данные не сохранились'
+              text='Такой логин или e-mail уже записан в системе. Попробуйте зарегистрироваться по другому логину или e-mail'
+              direction='registration'
+            />
+          )}
+          {errorAny && (
+            <AuthInfo
+              title='Данные не сохранились'
+              text='Что-то пошло не так и ваша регистрация не завершилась. Попробуйте ещё раз'
+              direction='refresh'
+            />
+          )}
         </div>
-      )}
-      {/* {token && <Navigate to='/' replace={true} />} */}
-      {!error400 && !errorAny && (
-        <AuthInfo
-          title='Регистрация успешна'
-          text='Регистрация прошла успешно. Зайдите в личный кабинет, используя свои логин и пароль'
-          direction='login'
-        />
-      )}
-      {error400 && (
-        <AuthInfo
-          title='Данные не сохранились'
-          text='Такой логин или e-mail уже записан в системе. Попробуйте зарегистрироваться по другому логину или e-mail'
-          direction='registration'
-        />
-      )}
-      {errorAny && (
-        <AuthInfo
-          title='Данные не сохранились'
-          text='Что-то пошло не так и ваша регистрация не завершилась. Попробуйте ещё раз'
-          direction='refresh'
-        />
-      )}
+      </div>
     </Fragment>
   );
 };

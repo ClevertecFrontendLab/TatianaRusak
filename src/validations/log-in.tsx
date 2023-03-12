@@ -2,8 +2,8 @@ import * as yup from 'yup';
 
 export const schemaLogIn = yup
   .object({
-    identifier: yup.string().required('<span class="auth__error">Поле не может быть пустым</span>'),
-    password: yup.string().required('<span class="auth__error">Поле не может быть пустым</span>'),
+    identifier: yup.string().required('<span class="auth__error" data-test-id="hint">Поле не может быть пустым</span>'),
+    password: yup.string().required('<span class="auth__error" data-test-id="hint">Поле не может быть пустым</span>'),
   })
   .required();
 
