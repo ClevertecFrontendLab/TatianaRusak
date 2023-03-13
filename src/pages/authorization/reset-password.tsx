@@ -3,31 +3,34 @@ import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useLocation } from 'react-router-dom';
 import { yupResolver } from '@hookform/resolvers/yup';
+import classNames from 'classnames';
 
 import { changePassword } from '../../api/api-auth';
 import { ReactComponent as CheckMark } from '../../assets/icons/check-mark.svg';
 import { ReactComponent as EyeClose } from '../../assets/icons/eye-close.svg';
 import { ReactComponent as EyeOpen } from '../../assets/icons/eye-open.svg';
 import { useAppDispatch } from '../../store/store';
-import { IResetPasswordFormData, schemaResetPassword } from '../../validations/reset-password';
+import { passwordValidate } from '../../utils/functions';
+// import { IResetPasswordFormData, schemaResetPassword } from '../../validations/reset-password';
+type IResetPasswordFormData = {
+  password: string;
+  passwordConfirmation: string;
+};
 
+// eslint-disable-next-line complexity
 const ResetPassword = () => {
   const {
     register,
     handleSubmit,
-    formState: { errors, isDirty },
-  } = useForm<IResetPasswordFormData>({
-    resolver: yupResolver(schemaResetPassword),
-    mode: 'all',
-    criteriaMode: 'all',
-  });
+    formState: { errors, dirtyFields },
+  } = useForm<IResetPasswordFormData>();
 
-  const [passwordValue, setPasswordValue] = useState('');
   const [passwordConfirmValue, setPasswordConfirmValue] = useState('');
-  const [isPasswordShown, setPasswordShown] = useState(false);
-  const [isPasswordInputDirty, setPasswordInputDirty] = useState(false);
   const [isPasswordConfirmShown, setPasswordConfirmShown] = useState(false);
   const dispatch = useAppDispatch();
+  const [isShown, setIsSHown] = useState(false);
+  const [passwordValue, setPasswordValue] = useState('');
+  const [isPasswordFieldHasError, setPasswordFieldHasError] = useState(false);
 
   const location = useLocation();
   const code = location.search.substring(6);
@@ -51,37 +54,41 @@ const ResetPassword = () => {
           <div className='auth__inputs-set'>
             <div className='auth__input-group'>
               <input
-                type={isPasswordShown ? 'text' : 'password'}
-                className='auth__input'
+                type={isShown ? 'text' : 'password'}
+                className={classNames('auth__input', {
+                  isError: isPasswordFieldHasError && !dirtyFields.password,
+                })}
                 {...register('password')}
                 value={passwordValue}
                 onChange={(e) => {
-                  console.log('errors', errors);
                   setPasswordValue(e.currentTarget.value);
+                  setPasswordFieldHasError(false);
+                }}
+                onBlur={() => {
+                  setPasswordFieldHasError(true);
+                  passwordValidate(passwordValue);
                 }}
                 required={true}
-                onBlur={() => setPasswordInputDirty(true)}
               />
               <label htmlFor='password' className='auth__label'>
                 Пароль
               </label>
-              <div
-                className='auth__password-eye'
-                onClick={() => setPasswordShown(!isPasswordShown)}
-                role='presentation'
-              >
-                {!!passwordValue && !errors.password && <CheckMark data-test-id='checkmark' />}
-                {!!passwordValue && isPasswordShown && <EyeOpen data-test-id='eye-opened' />}
-                {!!passwordValue && !isPasswordShown && <EyeClose data-test-id='eye-closed' />}
+              <div className='auth__password-eye' onClick={() => setIsSHown(!isShown)} role='presentation'>
+                {!!passwordValue && !errors.password && !passwordValidate(passwordValue) && (
+                  <CheckMark data-test-id='checkmark' />
+                )}
+                {!!passwordValue && isShown && <EyeOpen data-test-id='eye-opened' />}
+                {!!passwordValue && !isShown && <EyeClose data-test-id='eye-closed' />}
               </div>
-
               <div className='auth__error-hint'>
-                {isDirty && !errors.password?.message && 'Пароль не менее 8 символов, с заглавной буквой и цифрой'}
-                {errors.password && <span dangerouslySetInnerHTML={{ __html: `${errors.password?.message}` }} />}
-                {isPasswordInputDirty && !passwordValue && (
-                  <span className='auth__error' data-test-id='hint'>
-                    Поле не может быть пустым
-                  </span>
+                {!isPasswordFieldHasError &&
+                  !errors.password &&
+                  passwordValidate(passwordValue) &&
+                  passwordValidate(passwordValue) !== 'ok' && (
+                    <span dangerouslySetInnerHTML={{ __html: passwordValidate(passwordValue) }} />
+                  )}
+                {isPasswordFieldHasError && passwordValidate(passwordValue) !== 'ok' && (
+                  <span className='auth__error'>Пароль не менее 8 символов, с заглавной буквой и цифрой</span>
                 )}
               </div>
             </div>
